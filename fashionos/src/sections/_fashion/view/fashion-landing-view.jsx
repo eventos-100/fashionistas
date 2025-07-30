@@ -8,9 +8,9 @@ import { inputBaseClasses } from '@mui/material/InputBase';
 
 import { _tours, _travelPosts, _testimonials } from 'src/_mock';
 
-import { TravelNewsletter } from '../fashion-newsletter';
+import { FashionNewsletter } from '../fashion-newsletter';
 import { TravelFilters } from '../filters/travel-filters';
-import { TravelTestimonial } from '../fashion-testimonial';
+import { FashionTestimonial } from '../fashion-testimonial';
 import { TravelLandingHero } from '../landing/travel-landing-hero';
 import { TravelLandingPosts } from '../posts/travel-landing-posts';
 import { TravelLandingSummary } from '../landing/travel-landing-summary';
@@ -73,9 +73,9 @@ export function FashionLandingView() {
 
       <TravelLandingPosts posts={posts} carouselPosts={carouselPosts} />
 
-      <TravelTestimonial testimonials={_testimonials} />
+      <FashionTestimonial testimonials={_testimonials} />
 
-      <TravelNewsletter />
+      <FashionNewsletter />
     </>
   );
 }
