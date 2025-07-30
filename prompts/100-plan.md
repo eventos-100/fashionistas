@@ -31,7 +31,7 @@ best practices
 	stripe
 evaluate is the plan correct
 check all steps commands
-version depend ices
+version dependices anything else 
 
 
 

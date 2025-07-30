@@ -8,9 +8,9 @@ import { inputBaseClasses } from '@mui/material/InputBase';
 
 import { _tours, _travelPosts, _testimonials } from 'src/_mock';
 
-import { TravelNewsletter } from '../travel-newsletter';
+import { TravelNewsletter } from '../fashion-newsletter';
 import { TravelFilters } from '../filters/travel-filters';
-import { TravelTestimonial } from '../travel-testimonial';
+import { TravelTestimonial } from '../fashion-testimonial';
 import { TravelLandingHero } from '../landing/travel-landing-hero';
 import { TravelLandingPosts } from '../posts/travel-landing-posts';
 import { TravelLandingSummary } from '../landing/travel-landing-summary';

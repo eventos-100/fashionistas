@@ -35,6 +35,12 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "1-plan/**/*",
+    "whatsapp/**/*",
+    "fashionistas-1/**/*",
+    "supabase/**/*",
+    "CopilotKit/**/*",
+    "copilotkit/**/*"
   ]
 }

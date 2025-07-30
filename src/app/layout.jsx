@@ -52,11 +52,11 @@ export default function RootLayout({ children }) {
                 modeStorageKey="theme-color-scheme"
                 themeOverrides={themeOverrides}
                 themeConfig={themeConfig}
+              >
                 {/**
                  * If you want to set a default mode at the server side,
                  * add it as a prop like: `defaultMode="light"`
                  */}
-              >
                 <MotionLazy>
                   <ProgressBar />
                   <SettingsDrawer />

@@ -1,6 +1,0 @@
-{
-  "framework": "nextjs",
-  "buildCommand": "cd apps/website/nextapp && pnpm run build",
-  "outputDirectory": "apps/website/nextapp/.next",
-  "installCommand": "cd apps/website/nextapp && pnpm install"
-}
