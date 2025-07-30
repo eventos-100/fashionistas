@@ -1,0 +1,116 @@
+name: Update claude.md
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'tsconfig.json'
+      - 'components/**'
+      - 'app/**'
+      - 'lib/**'
+  workflow_dispatch:
+
+jobs:
+  update-claude-md:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Update claude.md metadata
+      run: |
+        # Update last updated timestamp
+        sed -i "s/\*\*Last Updated\*\*:.*/\*\*Last Updated\*\*: $(date -u +%Y-%m-%dT%H:%M:%SZ)/" claude.md
+        
+        # Update package versions
+        node -e "
+        const pkg = require('./package.json');
+        const fs = require('fs');
+        let content = fs.readFileSync('claude.md', 'utf8');
+        
+        // Update Next.js version
+        const nextVersion = pkg.dependencies.next.replace('^', '');
+        content = content.replace(/Next\.js \| [^ ]+ \|/, \`Next.js | \${nextVersion} |\`);
+        
+        // Update React version
+        const reactVersion = pkg.dependencies.react.replace('^', '');
+        content = content.replace(/React \| [^ ]+ \|/, \`React | \${reactVersion} |\`);
+        
+        // Update TypeScript version
+        const tsVersion = pkg.devDependencies.typescript.replace('^', '');
+        content = content.replace(/TypeScript \| [^ ]+ \|/, \`TypeScript | \${tsVersion} |\`);
+        
+        // Update CopilotKit version
+        const ckVersion = pkg.dependencies['@copilotkit/react-core'].replace('^', '');
+        content = content.replace(/CopilotKit \| [^ ]+ \|/, \`CopilotKit | \${ckVersion} |\`);
+        
+        fs.writeFileSync('claude.md', content);
+        "
+    
+    - name: Generate file structure
+      run: |
+        # Create updated file structure
+        echo '```' > .structure.tmp
+        tree -I 'node_modules|.git|.next|coverage|dist' --dirsfirst -a >> .structure.tmp || true
+        echo '```' >> .structure.tmp
+        
+        # Update file structure section in claude.md
+        awk '
+        /## File Structure/ { print; getline; print; inFile=1; next }
+        /^```$/ && inFile { system("cat .structure.tmp"); inFile=0; skip=1; next }
+        /^```$/ && skip { skip=0; next }
+        !skip { print }
+        ' claude.md > claude.md.tmp && mv claude.md.tmp claude.md
+        
+        rm .structure.tmp
+    
+    - name: Update commands from package.json
+      run: |
+        node -e "
+        const pkg = require('./package.json');
+        const fs = require('fs');
+        let content = fs.readFileSync('claude.md', 'utf8');
+        
+        // Extract available scripts
+        const scripts = Object.keys(pkg.scripts || {});
+        const devScripts = scripts.filter(s => ['dev', 'start', 'build', 'lint', 'test', 'format', 'type-check'].includes(s));
+        
+        // Update commands section
+        let commandsSection = '### Development\\n\\`\\`\\`bash\\n';
+        if (pkg.scripts.dev) commandsSection += '# Start development server\\nnpm run dev\\n\\n';
+        if (pkg.scripts['type-check']) commandsSection += '# Type checking\\nnpm run type-check\\n\\n';
+        if (pkg.scripts.lint) commandsSection += '# Linting\\nnpm run lint\\n\\n';
+        if (pkg.scripts.format) commandsSection += '# Format code\\nnpm run format\\n';
+        commandsSection += '\\`\\`\\`\\n';
+        
+        // Replace commands section
+        content = content.replace(/### Development[\\s\\S]*?### Build/, commandsSection + '\\n### Build');
+        
+        fs.writeFileSync('claude.md', content);
+        "
+    
+    - name: Check for changes
+      id: check_changes
+      run: |
+        if [[ -n $(git status --porcelain claude.md) ]]; then
+          echo "changes=true" >> $GITHUB_OUTPUT
+        else
+          echo "changes=false" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Commit and push changes
+      if: steps.check_changes.outputs.changes == 'true'
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add claude.md
+        git commit -m "chore: auto-update claude.md [skip ci]"
+        git push
