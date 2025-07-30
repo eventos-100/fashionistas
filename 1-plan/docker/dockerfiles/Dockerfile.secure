@@ -1,0 +1,86 @@
+# syntax=docker/dockerfile:1.4
+# Security-First Dockerfile Template
+# This follows all security best practices
+
+ARG BASE_IMAGE=node:20-alpine
+FROM ${BASE_IMAGE} AS base
+
+# Security: Update base image packages
+RUN apk update && \
+    apk upgrade --no-cache && \
+    rm -rf /var/cache/apk/*
+
+# Security: Create non-root user FIRST
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -S appuser -u 1001 -G appgroup
+
+# Security: Install only required packages
+RUN apk add --no-cache \
+    dumb-init \
+    curl
+
+WORKDIR /app
+
+# ===== Dependencies Stage =====
+FROM base AS dependencies
+# Install as root, then switch ownership
+COPY package*.json ./
+RUN npm ci --only=production --no-audit && \
+    npm cache clean --force && \
+    chown -R appuser:appgroup /app
+
+# ===== Build Stage =====
+FROM base AS build
+COPY package*.json ./RUN npm ci --no-audit && \
+    npm cache clean --force
+COPY . .
+RUN npm run build && \
+    npm prune --production && \
+    chown -R appuser:appgroup /app
+
+# ===== Production Stage =====
+FROM base AS production
+
+# Metadata (use build args)
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VERSION
+
+LABEL org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.title="EventsOps Secure App" \
+      org.opencontainers.image.description="Security-first Docker container" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.vendor="EventsOps" \
+      project="eventsops"
+
+# Copy dependencies and app with correct ownership
+COPY --from=dependencies --chown=appuser:appgroup /app/node_modules ./node_modules
+COPY --from=build --chown=appuser:appgroup /app/dist ./dist
+COPY --chown=appuser:appgroup package.json ./
+
+# Security: Switch to non-root user
+USER appuser
+
+# Security: Drop all capabilities
+# (This is handled at runtime with --cap-drop ALL)
+# Health check (REQUIRED for production)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3000/health || exit 1
+
+# Expose port (documentation only)
+EXPOSE 3000
+
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+# Run the application
+CMD ["node", "dist/server.js"]
+
+# ===== Development Stage (optional) =====
+FROM base AS development
+# Keep root for development convenience
+COPY --from=dependencies /app/node_modules ./node_modules
+COPY . .
+EXPOSE 3000
+CMD ["npm", "run", "dev"]

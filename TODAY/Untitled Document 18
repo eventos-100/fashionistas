@@ -1,0 +1,71 @@
+I need you to generate a complete Supabase schema for Atomic CRM, tailored for integration with an event platform like EventsOS.
+ The schema must follow PostgreSQL best practices, be compatible with Supabase features (RLS, JSONB, UUIDs, timestamps), and align with a modular CRM design.
+
+Requirements:
+Summary Table: Start with a markdown table listing all required tables. Include:
+
+Table Name
+
+Description
+
+Purpose (e.g. Leads, Contacts, Opportunities, Activities, Notes, Scoring, etc.)
+
+Progress/Status (use ✅ or ⏳ or ❌ as a tracker)
+
+Full SQL Schema: For each table in the summary, generate complete CREATE TABLE statements with:
+
+id UUID PRIMARY KEY DEFAULT gen_random_uuid()
+
+Audit columns (created_at, updated_at)
+
+Foreign keys with Supabase-style constraints
+
+JSONB fields for customizations (e.g. custom_fields)
+
+Enums (as CHECK constraints, not separate tables)
+
+Appropriate DEFAULT values and constraints
+
+Optimized indexes and comments if needed
+
+Tables to Include (minimum):
+
+crm_leads
+
+crm_contacts
+
+crm_opportunities
+
+crm_activities
+
+crm_notes
+
+crm_sales_stages
+
+crm_lead_scoring_rules
+
+crm_email_templates
+
+crm_communications
+
+crm_stakeholder_events
+
+crm_tags, crm_contact_tags, crm_lead_tags (for tagging system)
+
+Bonus (Optional):
+
+Include RLS policy examples for roles like organizer, sales_rep, and stakeholder.
+
+Add index creation for performance-sensitive fields (e.g., event_id, assigned_to, stage).
+
+Output each SQL block clearly separated and comment what the table is for.
+
+Output Format:
+Begin with a summary progress tracker.
+
+Follow with full SQL schema blocks.
+
+Ensure clean formatting for Supabase SQL compatibility.
+
+Audience:
+Developers building a CRM inside a event SaaS with Supabase + Refine + Material + Next.js.

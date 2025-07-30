@@ -1,0 +1,32 @@
+{
+  "name": "fashionos-whatsapp-integration",
+  "version": "1.0.0",
+  "description": "WhatsApp integration for FashionOS using WAHA",
+  "main": "fashionos-integration.js",
+  "scripts": {
+    "start": "node fashionos-integration.js",
+    "test": "node test-integration.js",
+    "setup": "./fix-session-issue.sh",
+    "test-api": "./test-api.sh",
+    "test-setup": "./test-waha-setup.sh"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  },
+  "keywords": [
+    "whatsapp",
+    "api",
+    "fashionos",
+    "waha",
+    "notifications"
+  ],
+  "author": "FashionOS Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fashionos/whatsapp-integration"
+  }
+}

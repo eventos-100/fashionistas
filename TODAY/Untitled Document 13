@@ -1,0 +1,82 @@
+Here is a list of the table names in **EventsOS** along with one-line descriptions:
+
+1. **profiles** - Stores user profile information including email, role, and preferences.
+2. **organizations** - Contains details about organizations including name, type, and billing information.
+3. **user\_organizations** - Manages user-organization relationships, roles, and permissions.
+4. **venues** - Stores information about venues including location, capacity, and amenities.
+5. **events** - Contains event details such as name, type, schedule, and venue.
+6. **event\_planning** - Manages event planning details including timeline, budget, and team assignments.
+7. **ticket\_types** - Defines different types of tickets for events with pricing and availability.
+8. **registrations** - Tracks attendee registration details for events including status and payment.
+9. **sponsors** - Stores sponsor details, including company name, contact info, and sponsorship tier.
+10. **event\_sponsors** - Junction table linking events and sponsors with sponsorship details.
+11. **vendors** - Contains vendor details such as business name, type, and services offered.
+12. **event\_vendors** - Junction table linking events and vendors with service details.
+13. **designers** - Stores information about fashion designers, including brand details and portfolio.
+14. **models** - Contains data about models including physical attributes, experience, and availability.
+15. **event\_models** - Junction table linking events and models with booking details.
+16. **event\_designers** - Junction table linking events and designers with participation details.
+
+Would you like to explore the schema of any specific table?
+Here are the **additional tables** generated from the uploaded files, along with a brief description of each:
+
+### **Junction Tables:**
+
+| **Table Name**                | **Description**                                                                     |
+| ----------------------------- | ----------------------------------------------------------------------------------- |
+| **event\_venues**             | Links events to venues, storing booking and financial details like rental costs.    |
+| **event\_vendors**            | Links events to vendors, including service details, booking status, and payment.    |
+| **event\_models**             | Links events to models, storing booking status, roles, compensation, and schedule.  |
+| **event\_sponsors\_enhanced** | Enhanced event-sponsor relationship, including sponsorship tier, benefits, and ROI. |
+
+### **Core Analytics Tables:**
+
+| **Table Name**          | **Description**                                                                    |
+| ----------------------- | ---------------------------------------------------------------------------------- |
+| **event\_stats**        | Stores real-time KPIs for events, including registrations, check-ins, and revenue. |
+| **event\_feedback**     | Stores NPS feedback and satisfaction ratings for events.                           |
+| **event\_nps\_summary** | A view summarizing NPS scores and feedback categories for each event.              |
+
+### **Additional Suggested Tables:**
+
+| **Table Name**          | **Description**                                                                               |
+| ----------------------- | --------------------------------------------------------------------------------------------- |
+| **media\_assets**       | Stores various media types (images, videos, documents) uploaded for events.                   |
+| **media\_associations** | Links media assets to events or brands, storing types like gallery, cover, or logos.          |
+| **app\_settings**       | Stores platform-wide settings such as commission rates, max file sizes, and maintenance mode. |
+
+Would you like detailed suggestions for any specific table or columns?
+Here are the **additional tables** not previously mentioned, based on the most recent uploaded files:
+
+### **CRM Support Tables:**
+
+| **Table Name**             | **Description**                                                                            |
+| -------------------------- | ------------------------------------------------------------------------------------------ |
+| **interactions**           | Tracks user interactions with contacts, accounts, opportunities, and events.               |
+| **lead\_sources**          | Stores information about lead sources, campaigns, and performance metrics.                 |
+| **lead\_scoring\_history** | Records lead scoring history based on various factors such as engagement and demographics. |
+
+### **Multi-Role Dashboard Enhancement Tables:**
+
+| **Table Name**                  | **Description**                                                                       |
+| ------------------------------- | ------------------------------------------------------------------------------------- |
+| **designer\_profiles**          | Stores designer-specific details such as brand name, portfolio, and social followers. |
+| **model\_profiles**             | Stores model-specific details such as stage name, experience level, and ratings.      |
+| **venue\_profiles**             | Stores venue-specific details such as name, capacity, and available services.         |
+| **vendor\_profiles**            | Stores vendor-specific details such as business name, services offered, and ratings.  |
+| **media\_profiles**             | Stores media outlet-specific details such as media type, reach, and event coverage.   |
+| **organizer\_profiles**         | Stores event organizer details including company, experience, and event types.        |
+| **dashboard\_preferences**      | Stores user-specific dashboard preferences such as layout and theme settings.         |
+| **dashboard\_analytics\_cache** | Caches analytics data to improve dashboard performance.                               |
+| **user\_activity\_log**         | Tracks user activity on the platform, such as logins, interactions, and changes.      |
+| **system\_health\_metrics**     | Monitors system performance and health metrics.                                       |
+
+### **Enhanced Event Planning and Budget Tables:**
+
+| **Table Name**      | **Description**                                                                            |
+| ------------------- | ------------------------------------------------------------------------------------------ |
+| **event\_planning** | Enhances event planning with categories, planning phases, deadlines, and team assignments. |
+| **event\_budget**   | Tracks detailed event budget information, including allocated and actual expenses.         |
+
+Would you like more details or suggestions for these new tables?
+

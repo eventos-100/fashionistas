@@ -1,0 +1,56 @@
+Here’s a far more comprehensive prompt you can feed into Claude to produce a complete ERD covering every aspect of your Eventos “fashion-atomic” CRM on Supabase + Refine, following best practices across the full event lifecycle:
+
+```
+Please generate a detailed Entity-Relationship Diagram (ERD) for the Eventos “fashion-atomic” CRM platform built on Supabase + Refine, covering every stage of the full event lifecycle—from planning and production through marketing, social media, sponsorship, ticketing & sales, revenue tracking, media & stakeholder management, all the way to dashboard & website content management.
+
+**Include the following entities (at minimum), with columns, data types, PKs, FKs, JSONB bags, RLS tenant isolation, soft-deletes, audit logs, and ownership fields:**
+- **Core CRM**  
+  - organizations (tenant)  
+  - auth.users & user_profiles  
+  - audit.change_log  
+- **Events & Planning**  
+  - events (draft → planning → published → live → completed status, timezone, capacity JSONB)  
+  - venues (physical, virtual, hybrid)  
+  - event_roles (organizer, co-organizer, staff, vendor, speaker, media, volunteer)  
+  - event_stakeholders (join table event ↔ contact with role, status, contract_value)  
+- **Contacts & Companies**  
+  - contacts (lead_score, lifecycle_stage enum, communication_preferences JSONB)  
+  - companies (profile, industry, size)  
+- **Sales & Sponsorship**  
+  - opportunities (deal_type, amount, probability, expected_revenue, pipeline_stage FK)  
+  - pipeline_stages (ordering, is_won flag)  
+  - sponsorship_packages (tier, benefits JSONB)  
+- **Production & Activities**  
+  - activities (partitioned by date, type, payload JSONB)  
+  - tasks & milestones (timeline planning)  
+- **Marketing & Social Media**  
+  - campaigns (email, social, ad platforms)  
+  - campaign_channels (Mailchimp, Postiz, Buffer, Google Ads)  
+  - social_posts (content, scheduled_at, platform enum, status)  
+- **Ticketing & Revenue**  
+  - ticket_classes (category, base_price, dynamic_pricing JSONB)  
+  - ticket_sales (user_id, ticket_class_id, purchase_intent, payment_status)  
+  - revenue_records (amount, source, currency, date)  
+- **Website & CMS**  
+  - pages (slug, title, content JSONB, status)  
+  - media_assets (url, type, metadata JSONB)  
+  - seo_metadata (entity, keywords, description)  
+- **Dashboard & Analytics**  
+  - materialized_views/event_analytics  
+  - view_refresh_logs  
+- **Cross-cutting**  
+  - all tables include organization_id FK + RLS policies  
+  - created_by, owner_id, deleted_at (soft delete)  
+  - JSONB custom_fields for flexible extensions  
+
+**Diagram requirements:**
+- Use Crow’s Foot notation with cardinalities (1-to-many, many-to-1, many-to-many join tables).
+- Annotate multi-tenant isolation via organization_id.
+- Show audit.change_log trigger relationships.
+- Indicate RLS policies (e.g. “org_isolation” on each table).
+- Include a legend explaining notation for JSONB bags, soft-deletes, enums, partial indexes, and auditing.
+- Suggest any additional tables or relationships needed to cover full lifecycle: webhooks, notifications, permissions, A/B tests, content authors, etc.
+
+Output a clear, production-ready ERD diagram specification suitable for import into a visual design tool. Thank you!
+```
+

@@ -1,0 +1,55 @@
+
+Sanjiovani Khullar
+whatsapp 1416-800-3103
+
+https://www.facebook.com/sanjiv.khullar/
+https://www.instagram.com/sanjiovani100/
+https://www.linkedin.com/in/sanjivkhullar/
+https:www.fashionistas.me
+city medellin
+company name - fashionistas
+job title - ceo
+website- fashionistas.me
+
+INSERT INTO "public"."user_types" ("id", "type_name", "slug", "description", "permissions", "is_active", "created_at", "updated_at") VALUES ('19cca7a1-ca7b-45e6-8d80-e714e855f6e2', 'Organizer', 'organizer', 'Event organizers who create and manage events', '{"can_create_events": true, "can_manage_venues": true, "can_view_analytics": true}', 'true', '2025-07-21 12:27:25.119935+00', '2025-07-22 19:03:21.797425+00');
+
+
+INSERT INTO public.users (
+  id,
+  full_name,
+  email,
+  phone,
+  city,
+  company_name,
+  job_title,
+  website,
+  instagram_url,
+  linkedin_url,
+  twitter_url,
+  tiktok_url,
+  user_type_id,
+  organization_id,
+  is_verified,
+  is_active,
+  created_at,
+  updated_at
+) VALUES (
+  gen_random_uuid(),
+  'Sanjiovani Khullar',
+  'ai@socialmediaville',
+  '1416-800-3103',
+  'Medellín',
+  'Fashionistas',
+  'CEO',
+  'https://fashionistas.me',
+  'https://www.instagram.com/sanjiovani100/',
+  'https://www.linkedin.com/in/sanjivkhullar/',
+  'https://www.facebook.com/sanjiv.khullar/',
+  NULL,
+  '19cca7a1-ca7b-45e6-8d80-e714e855f6e2',  -- user_type_id = Organizer
+  'd1d44deb-b696-4258-88af-f195769b1408',  -- organization_id (same as venue/org IDs)
+  true,
+  true,
+  now(),
+  now()
+);

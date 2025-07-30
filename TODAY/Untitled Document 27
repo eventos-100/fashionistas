@@ -1,0 +1,164 @@
+
+
+Here's the enhanced **Claude-compatible Super Prompt** including **all the official URLs** as references, formatted cleanly for direct copy-paste into Claude or other research tools:
+
+---
+
+## ✅ **Claude Super Prompt: Refine UI Integration Comparison (Material UI vs Mantine v5)**
+
+You are a senior product analyst and frontend architecture expert evaluating the **Refine React framework's UI integrations**, specifically:
+
+1. **Refine + Material UI**
+2. **Refine + Mantine v5**
+
+---
+
+### 🔍 **Research Instructions:**
+
+Conduct deep research using the **official documentation** and examples for each integration:
+
+#### 🔗 Refine + Material UI
+
+* [https://refine.dev/docs/ui-integrations/material-ui/introduction/](https://refine.dev/docs/ui-integrations/material-ui/introduction/)
+* [https://refine.dev/docs/examples/themes/refine-themes-mui/](https://refine.dev/docs/examples/themes/refine-themes-mui/)
+* [https://refine.dev/templates/](https://refine.dev/templates/)
+* [https://mui.com/](https://mui.com/)
+* [https://mui.com/core/](https://mui.com/core/)
+* [https://mui.com/x/](https://mui.com/x/)
+https://mui.com/toolpad/
+https://mui.com/templates/
+https://mui.com/design-kits/
+* [https://mui.com/x/react-data-grid/](https://mui.com/x/react-data-grid/)
+* [https://mui.com/x/react-date-pickers/](https://mui.com/x/react-date-pickers/)
+* [https://mui.com/system/getting-started/](https://mui.com/system/getting-started/)
+* [https://mui.com/toolpad/](https://mui.com/toolpad/)
+* [https://mui.com/toolpad/core/introduction/](https://mui.com/toolpad/core/introduction/)
+* [https://mui.com/components/](https://mui.com/components/)
+* [https://mui.com/material-ui/getting-started/](https://mui.com/material-ui/getting-started/)
+* [https://mui.com/templates/](https://mui.com/templates/)
+* [https://mui.com/design-kits/](https://mui.com/design-kits/)
+* [https://mui.com/joy-ui/getting-started/](https://mui.com/joy-ui/getting-started/)
+
+#### 🔗 Refine + Mantine v5
+
+* [https://refine.dev/docs/ui-integrations/mantine/introduction/](https://refine.dev/docs/ui-integrations/mantine/introduction/)
+* [https://refine.dev/blog/mantine-ui-react/](https://refine.dev/blog/mantine-ui-react/)
+* [https://mantine.dev/](https://mantine.dev/)
+* [https://mantine.dev/core/select/](https://mantine.dev/core/select/)
+
+---
+
+### 📊 Output Requirements:
+
+1. **Compare both integrations** using the following categories:
+
+   * 5 key features
+   * 5 primary use cases
+   * 5 Real-world example project using each integration
+   * Best practices summary for using each with Refine
+
+2. **Score each UI integration on a 100-point scale**:
+
+   * Functionality (30 points)
+   * Features & Component Depth (30 points)
+   * Integration Potential with Modern Stack (Next.js, Supabase, EventsOS) (20 points)
+   * ROI / Business Impact (productivity, customization, delivery speed) (20 points)
+
+3. **Present your results in this Markdown table**:
+
+```markdown
+| Rank | Solution               | Key Features (5)                           | Use Cases (5)                          | Example Project     | Best Practices Summary                        | Score |
+|------|------------------------|--------------------------------------------|----------------------------------------|---------------------|------------------------------------------------|-------|
+| 1    | Refine + Material UI   | [...features]                              | [...use cases]                         | Fashion CRM         | [...best practices]                            | 92    |
+| 2    | Refine + Mantine v5    | [...features]                              | [...use cases]                         | EventsOS Dashboard  | [...best practices]                            | 88    |
+```
+
+4. **Write a concluding paragraph**:
+
+   * Explain why the top solution ranked higher
+   * Highlight any surprising findings
+   * When and why to choose one integration over the other
+
+---
+
+### 🧠 Analysis Guidance:
+
+* Focus on **developer experience**, **component maturity**, **custom theming**, **mobile-first design**, **accessibility (WCAG)**, and **ecosystem tooling**.
+* Include support for **dark mode**, **form systems**, **layout customization**, **responsive grids**, and **SSR readiness**.
+* Reference **Refine override strategies**, `ThemedLayoutV2`, and custom theme best practices.
+* Use real-world examples (e.g. CRM, admin dashboards, analytics panels, marketplaces).
+
+---
+
+Would you like me to run this analysis now and generate the comparison table directly?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+your task is to generate a prompt to 
+generate comparison table
+for refine with material ui vs mantine v5
+
+generate comparison table
+1. Identify  leading solutions 
+2. do a comprehensive web search
+3. Research each one thoroughly:  
+   - Core features  
+   - Primary use cases  
+   - A concise real-world example of it in action  
+3. Score each on a 0–100 scale based on:  
+   - Functionality (30 pts)  
+   - features (30 pts)  
+   - Integration potential with our stack (20 pts)  
+   - ROI / business impact (20 pts)  
+4. Rank them high → low by total score.  
+5. Present your findings in a Markdown table with columns:  
+   | Rank | Solution | Key Features (3) | Use Case 3  | Example 3 | Best Practices | Score |  
+6. In a short paragraph below the table, explain why the top 10 scored highest and any surprising insights.
+7. 
+explain better
+best practices 
+clear, easy to understand 
+intelligent
+analytical
+logical flow 
+- https://refine.dev/docs/ui-integrations/material-ui/introduction/
+- https://refine.dev/docs/examples/themes/refine-themes-mui/
+- https://refine.dev/templates/
+
+- https://refine.dev/docs/ui-integrations/mantine/introduction/
+- https://refine.dev/blog/mantine-ui-react/
+- https://mui.com/
+- https://mui.com/core/
+- https://mui.com/x/
+- https://mui.com/toolpad/
+- https://mui.com/templates/
+- https://mui.com/design-kits/
+- https://mui.com/material-ui/getting-started/
+- https://mui.com/joy-ui/getting-started/
+- https://mui.com/system/getting-started/
+- https://mui.com/x/react-data-grid/
+- https://mui.com/x/react-date-pickers/
+- https://mui.com/toolpad/core/introduction/
+- https://mui.com/components/
+- https://mantine.dev/
+- https://mantine.dev/core/select/

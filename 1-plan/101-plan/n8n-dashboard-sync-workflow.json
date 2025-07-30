@@ -1,0 +1,281 @@
+{
+  "name": "EventsOS Dashboard Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "triggerAtMinute": 15
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Every 15 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "aggregation",
+        "query": "SELECT COUNT(DISTINCT id) as total_attendees, COUNT(DISTINCT event_id) as unique_events, SUM(CASE WHEN check_in_time IS NOT NULL THEN 1 ELSE 0 END) as checked_in FROM attendees WHERE created_at >= NOW() - INTERVAL '30 days';",
+        "additionalFields": {}
+      },
+      "id": "supabase-attendees",
+      "name": "Get Attendee Stats",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [450, 200],
+      "credentials": {
+        "supabaseApi": {
+          "id": "1",
+          "name": "EventsOS Supabase"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "aggregation",
+        "query": "SELECT COUNT(*) as total_events, COUNT(CASE WHEN event_date >= NOW() THEN 1 END) as upcoming_events, AVG(capacity) as avg_capacity, SUM(CASE WHEN status = 'active' THEN ticket_price * tickets_sold ELSE 0 END) as total_revenue FROM events;",
+        "additionalFields": {}
+      },
+      "id": "supabase-events",
+      "name": "Get Event Stats",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [450, 400],
+      "credentials": {
+        "supabaseApi": {
+          "id": "1",
+          "name": "EventsOS Supabase"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Combine all statistics\nconst attendeeStats = $input.all()[0].json;\nconst eventStats = $input.all()[1].json;\n\n// Calculate derived metrics\nconst checkInRate = attendeeStats.total_attendees > 0 \n  ? ((attendeeStats.checked_in / attendeeStats.total_attendees) * 100).toFixed(2)\n  : 0;\n\nconst utilizationRate = eventStats.avg_capacity > 0\n  ? ((attendeeStats.total_attendees / (eventStats.total_events * eventStats.avg_capacity)) * 100).toFixed(2)\n  : 0;\n\n// Format for Webflow\nreturn {\n  json: {\n    fields: {\n      'total-attendees': parseInt(attendeeStats.total_attendees),\n      'total-events': parseInt(eventStats.total_events),\n      'upcoming-events': parseInt(eventStats.upcoming_events),\n      'total-revenue': parseFloat(eventStats.total_revenue || 0),\n      'check-in-rate': parseFloat(checkInRate),\n      'utilization-rate': parseFloat(utilizationRate),\n      'last-sync': new Date().toISOString(),\n      'sync-status': 'success'\n    }\n  }\n};"
+      },
+      "id": "transform-data",
+      "name": "Transform for Webflow",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "resource": "item",
+        "operation": "get",
+        "siteId": "={{ $credentials.siteId }}",
+        "collectionId": "dashboard-stats-collection-id",
+        "limit": 1
+      },
+      "id": "check-existing",
+      "name": "Check Existing Stats",
+      "type": "n8n-nodes-base.webflow",
+      "typeVersion": 1,
+      "position": [850, 300],
+      "credentials": {
+        "webflowApi": {
+          "id": "2",
+          "name": "EventsOS Webflow"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "value1": "={{ $json.items?.length }}",
+              "operation": "largeThan",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "if-exists",
+      "name": "Stats Exist?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "resource": "item",
+        "operation": "update",
+        "siteId": "={{ $credentials.siteId }}",
+        "collectionId": "dashboard-stats-collection-id",
+        "itemId": "={{ $json.items[0]._id }}",
+        "live": true,
+        "fields": "={{ $node['Transform for Webflow'].json.fields }}"
+      },
+      "id": "update-stats",
+      "name": "Update Stats",
+      "type": "n8n-nodes-base.webflow",
+      "typeVersion": 1,
+      "position": [1250, 250]
+    },
+    {
+      "parameters": {
+        "resource": "item",
+        "operation": "create",
+        "siteId": "={{ $credentials.siteId }}",
+        "collectionId": "dashboard-stats-collection-id",
+        "live": true,
+        "fields": "={{ $node['Transform for Webflow'].json.fields }}"
+      },
+      "id": "create-stats",
+      "name": "Create Stats",
+      "type": "n8n-nodes-base.webflow",
+      "typeVersion": 1,
+      "position": [1250, 350]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Log sync results\nconst operation = $node['Stats Exist?'].json.items?.length > 0 ? 'updated' : 'created';\nconst timestamp = new Date().toISOString();\n\n// Store in Supabase logs\nreturn {\n  json: {\n    table: 'sync_logs',\n    data: {\n      workflow: 'dashboard-sync',\n      operation: operation,\n      status: 'success',\n      records_processed: 1,\n      sync_time_ms: Date.now() - new Date($node['Every 15 Minutes'].json.timestamp).getTime(),\n      timestamp: timestamp\n    }\n  }\n};"
+      },
+      "id": "log-results",
+      "name": "Log Sync Results",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": "public",
+        "table": "={{ $json.table }}",
+        "columns": "={{ Object.keys($json.data).join(',') }}",
+        "values": "={{ Object.values($json.data) }}"
+      },
+      "id": "save-log",
+      "name": "Save to Logs",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1650, 300]
+    }
+  ],
+  "connections": {
+    "Every 15 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Get Attendee Stats",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Event Stats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Attendee Stats": {
+      "main": [
+        [
+          {
+            "node": "Transform for Webflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Event Stats": {
+      "main": [
+        [
+          {
+            "node": "Transform for Webflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform for Webflow": {
+      "main": [
+        [
+          {
+            "node": "Check Existing Stats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Existing Stats": {
+      "main": [
+        [
+          {
+            "node": "Stats Exist?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stats Exist?": {
+      "main": [
+        [
+          {
+            "node": "Update Stats",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Stats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Stats": {
+      "main": [
+        [
+          {
+            "node": "Log Sync Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Stats": {
+      "main": [
+        [
+          {
+            "node": "Log Sync Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Sync Results": {
+      "main": [
+        [
+          {
+            "node": "Save to Logs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "error-handler-workflow-id"
+  }
+}

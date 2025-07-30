@@ -1,0 +1,47 @@
+| column_name         | data_type                | is_nullable | column_default    |
+| ------------------- | ------------------------ | ----------- | ----------------- |
+| id                  | uuid                     | NO          | gen_random_uuid() |
+| calendar_channel_id | uuid                     | NO          | null              |
+| calendar_event_id   | uuid                     | NO          | null              |
+| external_event_id   | text                     | NO          | null              |
+| event_external_id   | text                     | NO          | null              |
+| created_at          | timestamp with time zone | YES         | now()             |
+| updated_at          | timestamp with time zone | YES         | now()             |
+
+
+| column_name        | data_type                | is_nullable | column_default |
+| ------------------ | ------------------------ | ----------- | -------------- |
+| id                 | uuid                     | YES         | null           |
+| event_id           | uuid                     | YES         | null           |
+| communication_type | character varying        | YES         | null           |
+| message            | text                     | YES         | null           |
+| sent_at            | timestamp with time zone | YES         | null           |
+| status             | character varying        | YES         | null           |
+| recipient_count    | integer                  | YES         | null           |
+| delivery_rate      | numeric                  | YES         | null           |
+| created_at         | timestamp with time zone | YES         | null           |
+| updated_at         | timestamp with time zone | YES         | null           |
+
+| column_name     | data_type                | is_nullable | column_default    |
+| --------------- | ------------------------ | ----------- | ----------------- |
+| id              | uuid                     | NO          | gen_random_uuid() |
+| event_id        | uuid                     | YES         | null              |
+| user_id         | uuid                     | YES         | null              |
+| message_id      | character varying        | NO          | null              |
+| message_type    | character varying        | NO          | null              |
+| direction       | character varying        | NO          | null              |
+| message_content | text                     | YES         | null              |
+| response        | text                     | YES         | null              |
+| timestamp_event | timestamp with time zone | YES         | now()             |
+| phone_number    | character varying        | YES         | null              |
+| chat_id         | character varying        | YES         | null              |
+| media_type      | character varying        | YES         | null              |
+| media_url       | text                     | YES         | null              |
+| webhook_data    | jsonb                    | YES         | null              |
+| processed       | boolean                  | YES         | false             |
+| created_at      | timestamp with time zone | YES         | now()             |
+| updated_at      | timestamp with time zone | YES         | now()             |
+
+event_communication_logs
+event_communication_view
+event_communications

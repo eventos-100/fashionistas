@@ -1,0 +1,403 @@
+
+
+
+calendar_channel_event_associations
+create table public.calendar_channel_event_associations (
+  id uuid not null default gen_random_uuid (),
+  calendar_channel_id uuid not null,
+  calendar_event_id uuid not null,
+  external_event_id text not null,
+  event_external_id text not null,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  constraint calendar_channel_event_associations_pkey primary key (id),
+  constraint calendar_channel_event_associ_calendar_channel_id_external__key unique (calendar_channel_id, external_event_id),
+  constraint calendar_channel_event_associ_calendar_event_id_calendar_ch_key unique (calendar_event_id, calendar_channel_id),
+  constraint calendar_channel_event_associations_calendar_channel_id_fkey foreign KEY (calendar_channel_id) references calendar_channels (id) on delete CASCADE,
+  constraint calendar_channel_event_associations_calendar_event_id_fkey foreign KEY (calendar_event_id) references calendar_events (id) on delete CASCADE
+) TABLESPACE pg_default;
+
+calendar_channels
+
+create table public.calendar_channels (
+  id uuid not null default gen_random_uuid (),
+  connected_account_id uuid not null,
+  handle text not null,
+  visibility text null default 'SHARE_EVERYTHING'::text,
+  is_sync_enabled boolean null default true,
+  sync_stage text null default 'FULL_CALENDAR_EVENT_LIST_FETCH_PENDING'::text,
+  sync_status text null default 'ACTIVE'::text,
+  sync_cursor text null default ''::text,
+  is_contact_auto_creation_enabled boolean null default true,
+  contact_auto_creation_policy text null default 'SENT_AND_RECEIVED'::text,
+  throttle_failure_count integer null default 0,
+  last_sync_history_event_received timestamp with time zone null,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  constraint calendar_channels_pkey primary key (id),
+  constraint calendar_channels_connected_account_id_fkey foreign KEY (connected_account_id) references connected_accounts (id) on delete CASCADE,
+  constraint calendar_channels_contact_auto_creation_policy_check check (
+    (
+      contact_auto_creation_policy = any (
+        array[
+          'SENT_AND_RECEIVED'::text,
+          'SENT'::text,
+          'RECEIVED'::text,
+          'NONE'::text
+        ]
+      )
+    )
+  ),
+  constraint calendar_channels_visibility_check check (
+    (
+      visibility = any (
+        array[
+          'SHARE_EVERYTHING'::text,
+          'SHARE_AVAILABILITY'::text,
+          'METADATA'::text,
+          'PRIVATE'::text
+        ]
+      )
+    )
+  )
+) TABLESPACE pg_default;
+
+create index IF not exists idx_calendar_channels_account on public.calendar_channels using btree (connected_account_id) TABLESPACE pg_default;
+
+create index IF not exists idx_calendar_channels_sync on public.calendar_channels using btree (sync_status, sync_stage) TABLESPACE pg_default;
+
+create trigger update_calendar_channels_updated_at BEFORE
+update on calendar_channels for EACH row
+execute FUNCTION update_updated_at_column ();
+
+
+
+
+
+create table public.event_communication (
+  id uuid not null default gen_random_uuid (),
+  event_id uuid null,
+  communication_type character varying(50) null,
+  message text not null,
+  sent_at timestamp with time zone null default now(),
+  status character varying(50) null default 'scheduled'::character varying,
+  recipient_count integer null default 0,
+  delivery_rate numeric(5, 2) null,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  constraint event_communication_pkey primary key (id),
+  constraint event_communication_event_id_fkey foreign KEY (event_id) references events (id) on delete CASCADE,
+  constraint event_communication_communication_type_check check (
+    (
+      (communication_type)::text = any (
+        (
+          array[
+            'RSVP'::character varying,
+            'reminder'::character varying,
+            'edit'::character varying,
+            'cancellation'::character varying,
+            'notification'::character varying
+          ]
+        )::text[]
+      )
+    )
+  ),
+  constraint event_communication_status_check check (
+    (
+      (status)::text = any (
+        (
+          array[
+            'sent'::character varying,
+            'failed'::character varying,
+            'scheduled'::character varying
+          ]
+        )::text[]
+      )
+    )
+  )
+) TABLESPACE pg_default;
+
+create index IF not exists idx_event_communication_event on public.event_communication using btree (event_id) TABLESPACE pg_default;
+
+create index IF not exists idx_event_communication_type on public.event_communication using btree (communication_type) TABLESPACE pg_default;
+
+create index IF not exists idx_event_communication_status on public.event_communication using btree (status) TABLESPACE pg_default;
+
+create trigger update_event_communication_updated_at BEFORE
+update on event_communication for EACH row
+execute FUNCTION update_updated_at ();
+
+create table public.event_communications (
+  id uuid not null default gen_random_uuid (),
+  event_id uuid not null,
+  communication_type text not null,
+  purpose text not null,
+  recipient_type text not null,
+  recipient_count integer not null default 1,
+  recipient_list jsonb null default '[]'::jsonb,
+  subject text null,
+  content text not null,
+  attachments jsonb null default '[]'::jsonb,
+  scheduled_for timestamp with time zone null,
+  sent_at timestamp with time zone null,
+  delivery_status text null default 'pending'::text,
+  sent_count integer null default 0,
+  delivered_count integer null default 0,
+  opened_count integer null default 0,
+  clicked_count integer null default 0,
+  created_by uuid not null,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  constraint event_communications_pkey primary key (id),
+  constraint event_communications_created_by_fkey foreign KEY (created_by) references users (id),
+  constraint event_communications_event_id_fkey foreign KEY (event_id) references events (id) on delete CASCADE,
+  constraint event_communications_communication_type_check check (
+    (
+      communication_type = any (
+        array[
+          'email'::text,
+          'sms'::text,
+          'push_notification'::text,
+          'in_app_message'::text,
+          'whatsapp'::text
+        ]
+      )
+    )
+  ),
+  constraint event_communications_delivery_status_check check (
+    (
+      delivery_status = any (
+        array[
+          'pending'::text,
+          'queued'::text,
+          'sent'::text,
+          'delivered'::text,
+          'failed'::text,
+          'cancelled'::text
+        ]
+      )
+    )
+  ),
+  constraint event_communications_purpose_check check (
+    (
+      purpose = any (
+        array[
+          'registration_confirmation'::text,
+          'payment_receipt'::text,
+          'reminder'::text,
+          'update'::text,
+          'cancellation'::text,
+          'survey'::text,
+          'emergency'::text
+        ]
+      )
+    )
+  ),
+  constraint event_communications_recipient_type_check check (
+    (
+      recipient_type = any (
+        array[
+          'individual'::text,
+          'all_attendees'::text,
+          'all_sponsors'::text,
+          'all_vendors'::text,
+          'all_staff'::text,
+          'custom_segment'::text
+        ]
+      )
+    )
+  )
+) TABLESPACE pg_default;
+
+create index IF not exists idx_communications_event on public.event_communications using btree (event_id) TABLESPACE pg_default;
+
+create index IF not exists idx_communications_type on public.event_communications using btree (communication_type) TABLESPACE pg_default;
+
+create index IF not exists idx_communications_status on public.event_communications using btree (delivery_status) TABLESPACE pg_default;
+
+create index IF not exists idx_communications_scheduled on public.event_communications using btree (scheduled_for) TABLESPACE pg_default;
+
+create trigger update_event_communications_updated_at BEFORE
+update on event_communications for EACH row
+execute FUNCTION update_updated_at ();
+
+create table public.event_reminders (
+  id uuid not null default gen_random_uuid (),
+  event_id uuid null,
+  reminder_type character varying(50) null default 'pre_event'::character varying,
+  reminder_time timestamp with time zone not null,
+  message text not null,
+  reminder_status character varying(50) null default 'scheduled'::character varying,
+  target_audience character varying(50) null default 'all'::character varying,
+  sent_count integer null default 0,
+  success_count integer null default 0,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  constraint event_reminders_pkey primary key (id),
+  constraint event_reminders_event_id_fkey foreign KEY (event_id) references events (id) on delete CASCADE,
+  constraint event_reminders_reminder_status_check check (
+    (
+      (reminder_status)::text = any (
+        (
+          array[
+            'scheduled'::character varying,
+            'sent'::character varying,
+            'failed'::character varying,
+            'cancelled'::character varying
+          ]
+        )::text[]
+      )
+    )
+  ),
+  constraint event_reminders_reminder_type_check check (
+    (
+      (reminder_type)::text = any (
+        (
+          array[
+            'pre_event'::character varying,
+            'post_event'::character varying,
+            'rsvp_deadline'::character varying,
+            'payment_due'::character varying
+          ]
+        )::text[]
+      )
+    )
+  ),
+  constraint event_reminders_target_audience_check check (
+    (
+      (target_audience)::text = any (
+        (
+          array[
+            'all'::character varying,
+            'confirmed'::character varying,
+            'pending'::character varying,
+            'vip'::character varying,
+            'sponsors'::character varying
+          ]
+        )::text[]
+      )
+    )
+  )
+) TABLESPACE pg_default;
+
+create index IF not exists idx_event_reminders_event on public.event_reminders using btree (event_id) TABLESPACE pg_default;
+
+create index IF not exists idx_event_reminders_time on public.event_reminders using btree (reminder_time) TABLESPACE pg_default;
+
+create index IF not exists idx_event_reminders_status on public.event_reminders using btree (reminder_status) TABLESPACE pg_default;
+
+create index IF not exists idx_event_reminders_time_status on public.event_reminders using btree (reminder_time, reminder_status) TABLESPACE pg_default;
+
+create trigger update_event_reminders_updated_at BEFORE
+update on event_reminders for EACH row
+execute FUNCTION update_updated_at ();
+
+create table public.event_rsvp_reminders (
+  id uuid not null default gen_random_uuid (),
+  event_id uuid null,
+  user_id uuid null,
+  reminder_type character varying(50) null default 'initial'::character varying,
+  reminder_sent boolean null default false,
+  reminder_time timestamp with time zone not null,
+  sent_time timestamp with time zone null,
+  response_received boolean null default false,
+  response_time timestamp with time zone null,
+  escalation_level integer null default 1,
+  template_used character varying(100) null,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  constraint event_rsvp_reminders_pkey primary key (id),
+  constraint event_rsvp_reminders_event_id_fkey foreign KEY (event_id) references events (id) on delete CASCADE,
+  constraint event_rsvp_reminders_user_id_fkey foreign KEY (user_id) references users (id) on delete CASCADE,
+  constraint event_rsvp_reminders_escalation_level_check check (
+    (
+      (escalation_level >= 1)
+      and (escalation_level <= 5)
+    )
+  ),
+  constraint event_rsvp_reminders_reminder_type_check check (
+    (
+      (reminder_type)::text = any (
+        (
+          array[
+            'initial'::character varying,
+            'follow_up'::character varying,
+            'final'::character varying,
+            'deadline'::character varying
+          ]
+        )::text[]
+      )
+    )
+  )
+) TABLESPACE pg_default;
+
+create index IF not exists idx_rsvp_reminders_event on public.event_rsvp_reminders using btree (event_id) TABLESPACE pg_default;
+
+create index IF not exists idx_rsvp_reminders_user on public.event_rsvp_reminders using btree (user_id) TABLESPACE pg_default;
+
+create index IF not exists idx_rsvp_reminders_time on public.event_rsvp_reminders using btree (reminder_time) TABLESPACE pg_default;
+
+create index IF not exists idx_rsvp_reminders_sent on public.event_rsvp_reminders using btree (reminder_sent) TABLESPACE pg_default;
+
+create trigger update_event_rsvp_reminders_updated_at BEFORE
+update on event_rsvp_reminders for EACH row
+execute FUNCTION update_updated_at ();
+
+
+create table public.user_organizations (
+  id uuid not null default gen_random_uuid (),
+  user_id uuid null,
+  organization_id uuid null,
+  role text not null default 'member'::text,
+  permissions jsonb null default '{}'::jsonb,
+  is_active boolean null default true,
+  joined_at timestamp with time zone null default now(),
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  constraint user_organizations_pkey primary key (id),
+  constraint user_organizations_user_id_organization_id_key unique (user_id, organization_id),
+  constraint user_organizations_organization_id_fkey foreign KEY (organization_id) references organizations (id) on delete CASCADE,
+  constraint user_organizations_user_id_fkey foreign KEY (user_id) references users (id) on delete CASCADE,
+  constraint user_organizations_role_check check (
+    (
+      role = any (
+        array[
+          'owner'::text,
+          'admin'::text,
+          'member'::text,
+          'viewer'::text
+        ]
+      )
+    )
+  )
+) TABLESPACE pg_default;
+
+create index IF not exists idx_user_organizations_user on public.user_organizations using btree (user_id) TABLESPACE pg_default;
+
+create index IF not exists idx_user_organizations_org on public.user_organizations using btree (organization_id) TABLESPACE pg_default;
+
+create trigger update_user_organizations_updated_at BEFORE
+update on user_organizations for EACH row
+execute FUNCTION update_updated_at ();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

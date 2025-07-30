@@ -1,0 +1,109 @@
+Here is your **Claude-compatible super prompt** to **analyze similar/redundant tables and recommend consolidation, merging, or deletion**:
+
+---
+
+### ✅ Claude Super Prompt: Analyze Similar Tables & Recommend Consolidation
+
+You are a **PostgreSQL schema optimization and Supabase best practices expert**. Your task is to analyze a production-ready event management and CRM database, identify **tables with similar structure or purpose**, and recommend **merge, refactor, or deletion strategies** based on redundancy, bloat, or schema inefficiency.
+
+---
+
+### 🧩 Objective
+
+Analyze the following **related or potentially overlapping tables**, and determine:
+
+1. ✅ Do we need **separate tables** for each, or can they be **merged or normalized**?
+2. ❌ Are any of these **redundant or obsolete** based on schema structure or business logic?
+3. 🛠️ For any pair or group of similar tables, suggest:
+
+   * Merge strategy
+   * Field compatibility mapping
+   * RLS and constraint unification
+   * Migration risk and edge cases
+4. 🧱 Recommend the **ideal normalized structure** for the system to improve maintainability, RLS, and Supabase/Refine integration.
+
+---
+
+### 🔍 Tables to Analyze (Grouped by Purpose)
+
+#### **🔐 User Role & Type Management**
+
+* `user_roles`: detailed role-based permissions, categories, booleans
+* `user_types`: less granular type-based identity
+* `user_organizations`: also stores a `role`, active status, permissions JSON
+
+👉 Evaluate:
+
+* Do we need both `user_roles` **and** `user_types`?
+* Should `user_roles` be collapsed into `user_organizations.role + permissions`?
+* Can the `category` column be unified with `user_types.type_name`?
+
+---
+
+#### **📆 Calendar & Event Syncing**
+
+* `calendar_channels`: stores sync config per connected account
+* `calendar_channel_event_associations`: maps events to calendar channels
+
+👉 Evaluate:
+
+* Are both tables necessary, or can one serve both sync metadata and mapping?
+* Should associations be embedded in `calendar_channels` as JSON or remain separate?
+
+---
+
+#### **📣 Event Communication Tables**
+
+* `event_communication`: basic messaging per event (e.g. RSVP, reminder, notification)
+* `event_communications`: more advanced structure (audience types, delivery metrics)
+* `event_reminders`: separate reminders with overlap in structure
+* `event_rsvp_reminders`: another table with RSVP logic, escalation levels, templates
+
+👉 Evaluate:
+
+* Can we **consolidate** these into a single `event_communications` table?
+* Should `event_reminders` and `event_rsvp_reminders` become **subtypes** of `event_communications`?
+* What fields are overlapping or redundant?
+* Can we standardize `status`, `type`, `purpose`, and recipient metadata?
+
+---
+
+### 🔍 Specific Checks Requested
+
+* Do we need both `user_roles` and `user_types`, or should these be merged?
+* Do `event_communication` and `event_communications` duplicate functionality?
+* Are `event_reminders` and `event_rsvp_reminders` better as one `event_notifications` table?
+* Does `calendar_channel_event_associations` need to be a separate table from `calendar_channels`?
+
+---
+
+### 📦 Output Format
+
+Please return:
+
+1. ✅ A **table-by-table assessment**, noting:
+
+   * Core purpose
+   * Overlap/conflict with other tables
+   * Retain / Merge / Delete decision
+2. ⚠️ A **consolidation plan** for each redundant group
+3. 🧱 A **normalized schema proposal** (merged structure + constraints)
+4. 🛡️ Notes on RLS, indexes, Supabase triggers, and `update_updated_at()` logic
+5. 🚨 List of potential **data loss or migration risks**
+
+---
+
+### 🛠️ Constraints
+
+* Database is on **Supabase (PostgreSQL)** with full RLS and Refine integration.
+* Refactor must retain full compatibility with:
+
+  * `@refinedev/supabase` provider
+  * Supabase Auth (`auth.uid()`)
+  * Dynamic organization-based multi-tenancy
+  * JSON-based permissions where applicable
+* All changes must be safe, reversible, and well-documented.
+
+---
+
+

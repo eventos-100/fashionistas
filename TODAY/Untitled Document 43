@@ -1,0 +1,38 @@
+
+
+
+### **📁 Project Configuration**
+
+
+project_directories:
+/home/sk25/fx/eventos/eventos-admin
+/home/sk25/fx/eventos/website
+/home/sk25/fx/
+
+#### **Dashboard Stack (Organizer Portal)**
+
+https://refine.dev/
+https://refine.dev/docs/data/packages/supabase/
+
+
+framework: Next.js 14+ (App Router)
+admin_framework: Refine
+ui_library: 	ine v5 must use only do not use v7 
+database: Supabase (PostgreSQL)
+auth: Supabase Auth with RLS
+realtime: Supabase Realtime
+analytics: Recharts + Custom Dashboards
+```
+
+---
+
+
+#### **Dashboard Implementation**
+
+```yaml
+data_fetching:
+  - Server-side: getServerSideProps for fresh data
+  - Static: getStaticProps for analytics
+  - Client: React Query for mutations
+  
+---

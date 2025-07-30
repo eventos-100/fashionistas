@@ -1,0 +1,329 @@
+
+calendar_event_participants
+calendar_events
+event_schedules
+event_summary
+event_updates
+events
+
+
+| column_name         | data_type                | is_nullable | column_default    |
+| ------------------- | ------------------------ | ----------- | ----------------- |
+| id                  | uuid                     | NO          | gen_random_uuid() |
+| calendar_channel_id | uuid                     | NO          | null              |
+| calendar_event_id   | uuid                     | NO          | null              |
+| external_event_id   | text                     | NO          | null              |
+| event_external_id   | text                     | NO          | null              |
+| created_at          | timestamp with time zone | YES         | now()             |
+| updated_at          | timestamp with time zone | YES         | now()             |
+
+
+create table public.calendar_channels (
+  id uuid not null default gen_random_uuid (),
+  connected_account_id uuid not null,
+  handle text not null,
+  visibility text null default 'SHARE_EVERYTHING'::text,
+  is_sync_enabled boolean null default true,
+  sync_stage text null default 'FULL_CALENDAR_EVENT_LIST_FETCH_PENDING'::text,
+  sync_status text null default 'ACTIVE'::text,
+  sync_cursor text null default ''::text,
+  is_contact_auto_creation_enabled boolean null default true,
+  contact_auto_creation_policy text null default 'SENT_AND_RECEIVED'::text,
+  throttle_failure_count integer null default 0,
+  last_sync_history_event_received timestamp with time zone null,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  constraint calendar_channels_pkey primary key (id),
+  constraint calendar_channels_connected_account_id_fkey foreign KEY (connected_account_id) references connected_accounts (id) on delete CASCADE,
+  constraint calendar_channels_contact_auto_creation_policy_check check (
+    (
+      contact_auto_creation_policy = any (
+        array[
+          'SENT_AND_RECEIVED'::text,
+          'SENT'::text,
+          'RECEIVED'::text,
+          'NONE'::text
+        ]
+      )
+    )
+  ),
+  constraint calendar_channels_visibility_check check (
+    (
+      visibility = any (
+        array[
+          'SHARE_EVERYTHING'::text,
+          'SHARE_AVAILABILITY'::text,
+          'METADATA'::text,
+          'PRIVATE'::text
+        ]
+      )
+    )
+  )
+) TABLESPACE pg_default;
+
+create index IF not exists idx_calendar_channels_account on public.calendar_channels using btree (connected_account_id) TABLESPACE pg_default;
+
+create index IF not exists idx_calendar_channels_sync on public.calendar_channels using btree (sync_status, sync_stage) TABLESPACE pg_default;
+
+create trigger update_calendar_channels_updated_at BEFORE
+update on calendar_channels for EACH row
+execute FUNCTION update_updated_at_column ();
+
+
+create table public.calendar_event_participants (
+  id uuid not null default gen_random_uuid (),
+  calendar_event_id uuid not null,
+  handle text not null,
+  display_name text null default ''::text,
+  is_organizer boolean null default false,
+  response_status text null default 'NEEDS_ACTION'::text,
+  responded_at timestamp with time zone null,
+  user_id uuid null,
+  contact_id uuid null,
+  comment text null,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  constraint calendar_event_participants_pkey primary key (id),
+  constraint calendar_event_participants_calendar_event_id_handle_key unique (calendar_event_id, handle),
+  constraint calendar_event_participants_calendar_event_id_fkey foreign KEY (calendar_event_id) references calendar_events (id) on delete CASCADE,
+  constraint calendar_event_participants_contact_id_fkey foreign KEY (contact_id) references contacts (id),
+  constraint calendar_event_participants_user_id_fkey foreign KEY (user_id) references users (id),
+  constraint calendar_event_participants_response_status_check check (
+    (
+      response_status = any (
+        array[
+          'NEEDS_ACTION'::text,
+          'ACCEPTED'::text,
+          'DECLINED'::text,
+          'TENTATIVE'::text
+        ]
+      )
+    )
+  )
+) TABLESPACE pg_default;
+
+create index IF not exists idx_calendar_participants_event on public.calendar_event_participants using btree (calendar_event_id) TABLESPACE pg_default;
+
+create index IF not exists idx_calendar_participants_user on public.calendar_event_participants using btree (user_id) TABLESPACE pg_default
+where
+  (user_id is not null);
+
+create index IF not exists idx_calendar_participants_contact on public.calendar_event_participants using btree (contact_id) TABLESPACE pg_default
+where
+  (contact_id is not null);
+
+create trigger update_calendar_participants_updated_at BEFORE
+update on calendar_event_participants for EACH row
+execute FUNCTION update_updated_at_column ();
+
+
+
+create table public.calendar_events (
+  id uuid not null default gen_random_uuid (),
+  organization_id uuid not null,
+  title text not null default ''::text,
+  description text null default ''::text,
+  location text null default ''::text,
+  starts_at timestamp with time zone not null,
+  ends_at timestamp with time zone not null,
+  is_full_day boolean null default false,
+  is_canceled boolean null default false,
+  timezone text null default 'America/Bogota'::text,
+  ical_uid text null,
+  external_created_at timestamp with time zone null,
+  external_updated_at timestamp with time zone null,
+  conference_solution text null,
+  conference_url text null,
+  conference_link_label text null,
+  conference_phone text null,
+  conference_id text null,
+  organizer_id uuid not null,
+  created_by uuid not null,
+  event_id uuid null,
+  visibility text null default 'default'::text,
+  reminders jsonb null default '[]'::jsonb,
+  recurring_event_id uuid null,
+  custom_fields jsonb null default '{}'::jsonb,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  deleted_at timestamp with time zone null,
+  constraint calendar_events_pkey primary key (id),
+  constraint calendar_events_ical_uid_key unique (ical_uid),
+  constraint calendar_events_created_by_fkey foreign KEY (created_by) references users (id),
+  constraint calendar_events_event_id_fkey foreign KEY (event_id) references events (id),
+  constraint calendar_events_organization_id_fkey foreign KEY (organization_id) references organizations (id),
+  constraint calendar_events_organizer_id_fkey foreign KEY (organizer_id) references users (id),
+  constraint valid_event_time check ((ends_at > starts_at)),
+  constraint calendar_events_visibility_check check (
+    (
+      visibility = any (
+        array['public'::text, 'private'::text, 'default'::text]
+      )
+    )
+  ),
+  constraint calendar_events_conference_solution_check check (
+    (
+      conference_solution = any (
+        array[
+          'zoom'::text,
+          'meet'::text,
+          'teams'::text,
+          'whatsapp'::text,
+          'other'::text
+        ]
+      )
+    )
+  )
+) TABLESPACE pg_default;
+
+create index IF not exists idx_calendar_events_time on public.calendar_events using btree (starts_at, ends_at) TABLESPACE pg_default
+where
+  (deleted_at is null);
+
+create index IF not exists idx_calendar_events_organizer on public.calendar_events using btree (organizer_id) TABLESPACE pg_default
+where
+  (deleted_at is null);
+
+create index IF not exists idx_calendar_events_ical on public.calendar_events using btree (ical_uid) TABLESPACE pg_default
+where
+  (ical_uid is not null);
+
+create index IF not exists idx_calendar_events_organization on public.calendar_events using btree (organization_id) TABLESPACE pg_default;
+
+create trigger update_calendar_events_updated_at BEFORE
+update on calendar_events for EACH row
+execute FUNCTION update_updated_at_column ();
+
+
+| column_name         | data_type                | is_nullable | column_default |
+| ------------------- | ------------------------ | ----------- | -------------- |
+| id                  | uuid                     | YES         | null           |
+| name                | text                     | YES         | null           |
+| start_date          | timestamp with time zone | YES         | null           |
+| end_date            | timestamp with time zone | YES         | null           |
+| status              | text                     | YES         | null           |
+| capacity            | integer                  | YES         | null           |
+| confirmed_count     | bigint                   | YES         | null           |
+| waitlisted_count    | bigint                   | YES         | null           |
+| cancelled_count     | bigint                   | YES         | null           |
+| capacity_percentage | numeric                  | YES         | null           |
+| total_revenue       | numeric                  | YES         | null           |
+| organization_id     | uuid                     | YES         | null           |
+
+create table public.event_updates (
+  id uuid not null default gen_random_uuid (),
+  event_id uuid null,
+  update_type character varying(50) not null,
+  update_details text not null,
+  previous_values jsonb null,
+  new_values jsonb null,
+  update_status character varying(50) null default 'pending'::character varying,
+  affected_attendees integer null default 0,
+  notification_sent boolean null default false,
+  update_time timestamp with time zone null default now(),
+  created_by uuid null,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  constraint event_updates_pkey primary key (id),
+  constraint event_updates_created_by_fkey foreign KEY (created_by) references users (id) on delete set null,
+  constraint event_updates_event_id_fkey foreign KEY (event_id) references events (id) on delete CASCADE,
+  constraint event_updates_update_status_check check (
+    (
+      (update_status)::text = any (
+        (
+          array[
+            'pending'::character varying,
+            'notified'::character varying,
+            'failed'::character varying
+          ]
+        )::text[]
+      )
+    )
+  ),
+  constraint event_updates_update_type_check check (
+    (
+      (update_type)::text = any (
+        (
+          array[
+            'edit'::character varying,
+            'cancellation'::character varying,
+            'postponement'::character varying,
+            'venue_change'::character varying,
+            'time_change'::character varying
+          ]
+        )::text[]
+      )
+    )
+  )
+) TABLESPACE pg_default;
+
+create index IF not exists idx_event_updates_event on public.event_updates using btree (event_id) TABLESPACE pg_default;
+
+create index IF not exists idx_event_updates_type on public.event_updates using btree (update_type) TABLESPACE pg_default;
+
+create index IF not exists idx_event_updates_status on public.event_updates using btree (update_status) TABLESPACE pg_default;
+
+create index IF not exists idx_event_updates_created_by on public.event_updates using btree (created_by) TABLESPACE pg_default;
+
+create trigger update_event_updates_updated_at BEFORE
+update on event_updates for EACH row
+execute FUNCTION update_updated_at ();
+
+
+
+
+create table public.events (
+  id uuid not null default gen_random_uuid (),
+  organization_id uuid not null,
+  organizer_user_id uuid not null,
+  name text not null,
+  slug text not null,
+  description text null,
+  event_type text null default 'other'::text,
+  format text null default 'in-person'::text,
+  status text null default 'draft'::text,
+  visibility text null default 'public'::text,
+  start_date timestamp with time zone not null,
+  end_date timestamp with time zone not null,
+  timezone text null default 'America/Bogota'::text,
+  venue_id uuid null,
+  capacity integer not null,
+  registered_count integer null default 0,
+  ticket_revenue numeric(12, 2) null default 0,
+  metadata jsonb null default '{}'::jsonb,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  is_deleted boolean null default false,
+  deleted_at timestamp with time zone null,
+  deleted_by uuid null,
+  allow_waitlist boolean null default true,
+  max_waitlist_size integer null,
+  constraint events_pkey primary key (id),
+  constraint events_slug_key unique (slug),
+  constraint events_org_slug_unique unique (organization_id, slug),
+  constraint events_venue_id_fkey foreign KEY (venue_id) references venues (id),
+  constraint events_organizer_user_id_fkey foreign KEY (organizer_user_id) references users (id),
+  constraint events_organization_id_fkey foreign KEY (organization_id) references organizations (id) on delete CASCADE,
+  constraint events_deleted_by_fkey foreign KEY (deleted_by) references users (id)
+) TABLESPACE pg_default;
+
+create index IF not exists idx_events_organization on public.events using btree (organization_id) TABLESPACE pg_default;
+
+create index IF not exists idx_events_venue on public.events using btree (venue_id) TABLESPACE pg_default;
+
+create index IF not exists idx_events_org_dates on public.events using btree (organization_id, start_date, end_date) TABLESPACE pg_default;
+
+create index IF not exists idx_events_status on public.events using btree (status) TABLESPACE pg_default;
+
+create index IF not exists idx_events_not_deleted on public.events using btree (organization_id) TABLESPACE pg_default
+where
+  (is_deleted = false);
+
+create index IF not exists idx_events_organizer_user_id on public.events using btree (organizer_user_id) TABLESPACE pg_default;
+
+create index IF not exists idx_events_org_status_date on public.events using btree (organization_id, status, start_date) TABLESPACE pg_default;
+
+create trigger update_events_updated_at BEFORE
+update on events for EACH row
+execute FUNCTION update_updated_at ();
+

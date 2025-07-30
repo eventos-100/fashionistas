@@ -1,0 +1,79 @@
+you are an expert database and architecture reviewer. Your task is to analyze and compare the database requirements for Twenty (a real-time calendar, scheduling, and collaborative event platform) against an existing production-grade Supabase PostgreSQL schema currently used by EventsOS, a CRM + event management system.
+
+🔍 Goals:
+
+Analyze Twenty’s full database schema and architecture.
+
+Identify required tables, fields, and relationships used by Twenty to power:
+
+Real-time scheduling
+
+Shared calendar availability
+
+Meeting types and slots
+
+Notifications and invites
+
+Time zone, booking links, and buffers
+
+Multi-user scheduling logic
+
+Compare with our existing EventsOS schema (based on Supabase/Postgres).
+
+Generate a gap analysis:
+
+✅ What’s already supported
+
+⚠️ What’s partially supported (but needs changes)
+
+❌ What’s missing entirely
+
+Recommend concrete database changes to upgrade EventsOS to be compatible with a Twenty-style experience, including support for:
+
+Group availability detection
+
+Embedded scheduling links
+
+Rescheduling and cancellation flows
+
+ICS/calendar sync integration
+
+Notifications, reminders, and event confirmations
+
+Use best practices for Supabase, Postgres, and real-time SaaS apps.
+
+🔗 Resources for Reference:
+
+🔗 GitHub (Twenty): https://github.com/twentyhq/twenty
+
+🔗 API Docs: https://twenty.com/developers
+
+🔗 Booking Flow Example: https://twenty.com
+
+🔗 EventsOS Architecture (target system):
+
+Supabase with full RLS, partitioned events, dynamic pricing
+
+Auth, organizations, multi-user dashboard
+
+Refine 
+
+Real-time features with Supabase Channels
+
+Tables include: events, event_schedules, registrations, contacts, event_reminders, event_updates, venues, ticket_types, user_relationships, availability_slots, meeting_types, etc.
+
+✅ Deliverables:
+
+Please return the following:
+
+📋 A comparison table of Twenty database features vs EventsOS schema.
+
+⚠️ A list of recommended schema changes, including new tables, fields, triggers, enums, or indexes needed to implement Twenty-style scheduling.
+
+🧩 Suggested ways to map existing EventsOS tables to Twenty concepts.
+
+🔐 Any required changes to RLS or auth structures.
+
+🚀 Real-time sync or cron job logic needed for collaborative calendar views.
+
+📆 Support for time zone, recurrence, availability, and group meetings. search https://twenty.com/developers https://github.com/twentyhq/twenty

@@ -1,0 +1,91 @@
+act like a detective
+		analyze deeply 
+		think harder
+		review
+		always follow best practices 
+		official docs 
+		ensure setup is 100% correct 
+		identify any 
+		core problem
+		errors 
+		red flags
+		testing strategy 
+		run  5 tests
+		troubleshooting 
+		is anything  missing 
+		error prevention
+		suggest improvements 
+		
+		I'll help you run the FashionOS dashboard on localhost.
+		
+		 Let me check the current server status and start it properly.I see there's already a Next.js dev server running on port 3006. Let me check if it's responding:Great! The server is already running. Let me also check port 3005:Port 3005 seems to be hanging. Let me provide you with the working localhost information:
+https://v5.mantine.dev/pages/getting-started/
+https://refine.dev/docs/ui-integrations/mantine/introduction/
+
+we are using mantine v5 
+remove all references to mantine v7
+
+
+
+🚀 FashionOS Dashboard is Running!
+
+✅ Server Status: ACTIVE
+
+The development server is currently running on port 3006.
+
+🌐 Access Your Dashboard
+
+Open your web browser and navigate to:
+
+Home Page: http://localhost:3006
+
+Dashboard: http://localhost:3006/dashboard
+
+Events Management: http://localhost:3006/dashboard/events
+
+Sponsors Management: http://localhost:3006/dashboard/sponsors
+
+📊 Server Details
+
+Port: 3006
+
+Process ID: 39691
+
+Status: Running and responding (HTTP 200)
+
+Framework: Next.js 14.2.30
+
+🎨 Features Available
+
+✅ Sidebar navigation with FashionOS logo
+
+✅ Responsive design
+
+✅ Dashboard with revenue, events, sponsors cards
+
+✅ Events page with search and filtering
+
+✅ Sponsors page with tier management
+
+🔧 Quick Commands
+
+If you need to restart the server:
+
+# Kill current server
+kill 39691
+
+# Start fresh
+cd /home/sk25/fx/fashionos
+npm run dev
+
+
+To use the default port 3005:
+
+# Kill all Next.js processes
+pkill -f "next dev"
+
+# Start on port 3005
+cd /home/sk25/fx/fashionos
+npm run dev
+
+

@@ -1,0 +1,39 @@
+your task is to 
+generate plan
+	table of contents -executive summary
+	anlayze what has been completed green
+	what is in progress yellow
+	what needs to be completed 
+	table of contents
+	Progress Tracker
+
+	| Phase     | short description - less than 10  words | Status      | % Complete |
+	| --------- | --------------------------------------- | ----------- | ---------- |
+	| 1 task    | add green dot for completed tasks       | Not Started | 0%         |
+	| 2 tasks   | add yellow dot for in progress          | In Progress | 45%        |
+	| add tasks | red dot for completed and tested        | Completed   | 100%       |
+	generate table with 
+	short description features use cases real world examples x 5 best practices and url for official docs
+	best practices 
+	 add purpose to each task
+	steps to complete the task 
+	commands 
+	 add success criteria to appropriate sections of doc 
+	 and additional points which will ensure successful implementation 
+	checklist ensure correct version and dependencies
+	evaluate is it production ready
+	what elements are needed for production ready
+	generate production ready checklist
+	what changes improvmeents need to be made made
+	trouble shooting
+	comprehensive testing work 100%
+	use best practices for software product project planning 
+
+logical flow tasks steps 
+explain better
+best practices 
+clear, easy to understand 
+intelligent
+analytical
+logical flow 
+do not use code in this prompt except for commands

@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  waha:
+    image: devlikeapro/waha:latest
+    container_name: waha-core
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - WAHA_DASHBOARD_USERNAME=admin
+      - WAHA_DASHBOARD_PASSWORD=admin
+      - WAHA_DASHBOARD_ENABLED=true
+      - WAHA_API_KEY=fashionos-waha-key-2024
+    volumes:
+      - ./waha-data:/app/.sessions
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - waha-network
+
+networks:
+  waha-network:
+    driver: bridge
+
+volumes:
+  waha-data:
+    driver: local

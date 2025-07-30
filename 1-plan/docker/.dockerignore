@@ -1,0 +1,75 @@
+# Docker ignore file - security first
+# Prevents sensitive files from being included in image
+
+# Version control
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.circleci/
+jenkins/
+
+# Development
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documentation
+README.md
+CHANGELOG.md
+LICENSE
+docs/
+*.md
+
+# Testing
+tests/
+test/
+spec/
+coverage/
+.nyc_output/
+*.test.js
+*.spec.js
+jest.config.js
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+.yarn/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+secrets/
+*.key
+*.pem
+*.p12
+cosign.key
+cosign.pub
+
+# Build artifacts
+dist/
+build/
+*.log
+tmp/
+temp/
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Project specific
+Makefile
+scripts/
+k8s/
+helm/

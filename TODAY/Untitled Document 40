@@ -1,0 +1,75 @@
+
+
+calendar_channel_event_associations
+calendar_channels
+calendar_event_participants
+calendar_events
+event_updates
+
+
+
+
+
+
+
+
+
+
+create table public.event_updates (
+  id uuid not null default gen_random_uuid (),
+  event_id uuid null,
+  update_type character varying(50) not null,
+  update_details text not null,
+  previous_values jsonb null,
+  new_values jsonb null,
+  update_status character varying(50) null default 'pending'::character varying,
+  affected_attendees integer null default 0,
+  notification_sent boolean null default false,
+  update_time timestamp with time zone null default now(),
+  created_by uuid null,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  constraint event_updates_pkey primary key (id),
+  constraint event_updates_created_by_fkey foreign KEY (created_by) references users (id) on delete set null,
+  constraint event_updates_event_id_fkey foreign KEY (event_id) references events (id) on delete CASCADE,
+  constraint event_updates_update_status_check check (
+    (
+      (update_status)::text = any (
+        (
+          array[
+            'pending'::character varying,
+            'notified'::character varying,
+            'failed'::character varying
+          ]
+        )::text[]
+      )
+    )
+  ),
+  constraint event_updates_update_type_check check (
+    (
+      (update_type)::text = any (
+        (
+          array[
+            'edit'::character varying,
+            'cancellation'::character varying,
+            'postponement'::character varying,
+            'venue_change'::character varying,
+            'time_change'::character varying
+          ]
+        )::text[]
+      )
+    )
+  )
+) TABLESPACE pg_default;
+
+create index IF not exists idx_event_updates_event on public.event_updates using btree (event_id) TABLESPACE pg_default;
+
+create index IF not exists idx_event_updates_type on public.event_updates using btree (update_type) TABLESPACE pg_default;
+
+create index IF not exists idx_event_updates_status on public.event_updates using btree (update_status) TABLESPACE pg_default;
+
+create index IF not exists idx_event_updates_created_by on public.event_updates using btree (created_by) TABLESPACE pg_default;
+
+create trigger update_event_updates_updated_at BEFORE
+update on event_updates for EACH row
+execute FUNCTION update_updated_at ();

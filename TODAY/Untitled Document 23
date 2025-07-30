@@ -1,0 +1,81 @@
+
+
+https://supabase.com/docs/guides/getting-started/quickstarts/refine
+https://supabase.com/docs/guides/getting-started/tutorials/with-refine
+https://supabase.com/partners/integrations/refine_dev
+https://refine.dev/docs/examples/data-provider/supabase/
+https://www.npmjs.com/package/@refinedev/supabase
+
+https://refine.dev/docs/3.xx.xx/examples/authentication/mui/
+https://refine.dev/docs/3.xx.xx/examples/auth-provider/auth0/
+https://refine.dev/docs/3.xx.xx/examples/auth-provider/google-auth/
+https://refine.dev/docs/3.xx.xx/examples/i18n/i18n-nextjs/
+https://refine.dev/docs/ui-integrations/material-ui/introduction/
+
+
+- https://github.com/marmelab/atomic-crm/tree/main
+- https://github.com/marmelab/atomic-crm/tree/main/supabase
+
+
+- https://supabase.com/docs/guides/database/tables
+- https://supabase.com/docs/guides/database/tables#creating-tables
+- https://supabase.com/docs/guides/database/tables#primary-keys
+- https://supabase.com/docs/guides/database/tables#joining-tables-with-foreign-keys
+- https://supabase.com/docs/guides/database/tables#views
+- https://supabase.com/docs/guides/database/overview
+- https://supabase.com/docs/guides/getting-started/quickstarts/nextjs
+- https://supabase.com/docs/guides/database/postgres/row-level-security
+- https://supabase.com/features/row-level-security
+- https://dev.to/asheeshh/mastering-supabase-rls-row-level-security-as-a-beginner-5175
+- https://supabase.com/docs/guides/troubleshooting/rls-performance-and-best-practices-Z5Jjwv
+- https://supabase.com/docs/guides/troubleshooting/rls-simplified-BJTcS8
+- https://supabase.com/docs/guides/getting-started/ai-prompts/database-rls-policies
+- https://supabase.com/docs/guides/database/postgres/triggers
+- https://supabase.com/blog/event-triggers-wo-superuser
+- https://dev.to/kalama_ayubu_920a009aeba9/supabase-triggers-6g5
+- https://supabase.com/docs/guides/database/webhooks
+- https://supabase.com/blog/tags/event%20triggers
+- https://supabase.com/docs/guides/auth/managing-user-data
+- https://supabase.com/docs/guides/functions
+- https://supabase.com/docs/guides/functions/quickstart
+- https://supabase.com/docs/guides/functions/deploy
+- https://supabase.com/docs/guides/database/functions
+- https://supabase.com/docs/guides/functions/quickstart
+- https://supabase.com/docs/guides/functions/unit-test
+- https://supabase.com/docs/guides/functions/troubleshooting
+- https://docs-4ta3lngqn-supabase.vercel.app/docs/guides/functions/debugging
+- https://supabase.com/docs/guides/functions/quickstart
+- https://supabase.com/docs/guides/troubleshooting/inspecting-edge-function-environment-variables-wg5qOQ
+- https://supabase.com/docs/guides/functions
+- https://github.com/marmelab/atomic-crm/tree/main
+- https://github.com/marmelab/atomic-crm/tree/main/supabase
+- https://supabase.com/docs/guides/database/tables
+- https://supabase.com/docs/guides/database/tables#creating-tables
+- https://supabase.com/docs/guides/database/tables#primary-keys
+- https://supabase.com/docs/guides/database/tables#joining-tables-with-foreign-keys
+- https://supabase.com/docs/guides/database/tables#views
+- https://supabase.com/docs/guides/database/overview
+- https://supabase.com/docs/guides/getting-started/quickstarts/nextjs
+- https://supabase.com/docs/guides/database/postgres/row-level-security
+- https://supabase.com/features/row-level-security
+- https://dev.to/asheeshh/mastering-supabase-rls-row-level-security-as-a-beginner-5175
+- https://supabase.com/docs/guides/troubleshooting/rls-performance-and-best-practices-Z5Jjwv
+- https://supabase.com/docs/guides/troubleshooting/rls-simplified-BJTcS8
+- https://supabase.com/docs/guides/getting-started/ai-prompts/database-rls-policies
+- https://supabase.com/docs/guides/database/postgres/triggers
+- https://supabase.com/blog/event-triggers-wo-superuser
+- https://dev.to/kalama_ayubu_920a009aeba9/supabase-triggers-6g5
+- https://supabase.com/docs/guides/database/webhooks
+- https://supabase.com/blog/tags/event%20triggers
+- https://supabase.com/docs/guides/auth/managing-user-data
+- https://supabase.com/docs/guides/functions
+- https://supabase.com/docs/guides/functions/quickstart
+- https://supabase.com/docs/guides/functions/deploy
+- https://supabase.com/docs/guides/database/functions
+- https://supabase.com/docs/guides/functions/quickstart
+- https://supabase.com/docs/guides/functions/unit-test
+- https://supabase.com/docs/guides/functions/troubleshooting
+- https://docs-4ta3lngqn-supabase.vercel.app/docs/guides/functions/debugging
+- https://supabase.com/docs/guides/functions/quickstart
+- https://supabase.com/docs/guides/troubleshooting/inspecting-edge-function-environment-variables-wg5qOQ
+- https://supabase.com/docs/guides/functions

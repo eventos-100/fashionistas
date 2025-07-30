@@ -1,0 +1,134 @@
+version: '3.8'
+
+# Security defaults for all services
+x-security-defaults: &security
+  user: "1001:1001"
+  read_only: true
+  tmpfs:
+    - /tmp
+    - /run
+  cap_drop:
+    - ALL
+  cap_add:
+    - NET_BIND_SERVICE
+  security_opt:
+    - no-new-privileges:true
+
+# Resource defaults
+x-resource-limits: &resources
+  deploy:
+    resources:
+      limits:
+        cpus: '${APP_CPU_LIMIT:-0.5}'
+        memory: ${APP_MEMORY_LIMIT:-256M}
+      reservations:
+        cpus: '0.25'
+        memory: 128M
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.secure
+      target: production      args:
+        - BUILDKIT_INLINE_CACHE=1
+        - BUILD_DATE=${BUILD_DATE}
+        - VCS_REF=${VCS_REF}
+        - VERSION=${VERSION}
+    image: ${REGISTRY}/app:${VERSION}
+    container_name: ${PROJECT}_app
+    <<: [*security, *resources]
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 3000
+      # Database connection from secret file
+      DATABASE_URL_FILE: /run/secrets/db_url
+    volumes:
+      # Mount secrets as read-only files
+      - ./secrets/db_url:/run/secrets/db_url:ro
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - app-network    labels:
+      - "project=${PROJECT}"
+      - "com.docker.compose.project=${PROJECT}"
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: ${PROJECT}_db
+    user: "999:999"  # postgres user
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_USER: appuser
+      POSTGRES_DB: appdb
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./secrets/db_password:/run/secrets/db_password:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d appdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '${DB_CPU_LIMIT:-1.0}'
+          memory: ${DB_MEMORY_LIMIT:-512M}
+    networks:
+      - app-network
+    labels:
+      - "project=${PROJECT}"
+  redis:
+    image: redis:7-alpine
+    container_name: ${PROJECT}_redis
+    user: "999:999"  # redis user
+    command: redis-server --requirepass-file /run/secrets/redis_password
+    volumes:
+      - redis_data:/data
+      - ./secrets/redis_password:/run/secrets/redis_password:ro
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    networks:
+      - app-network
+    labels:
+      - "project=${PROJECT}"
+
+volumes:
+  postgres_data:
+    driver: local
+    labels:
+      - "project=${PROJECT}"
+  redis_data:
+    driver: local
+    labels:
+      - "project=${PROJECT}"
+
+networks:
+  app-network:
+    driver: bridge
+    labels:
+      - "project=${PROJECT}"

@@ -1,0 +1,2 @@
+/home/sk/fx/eventos/docs-organized/README.md
+/home/sk/fx/eventos/zone-template/README.md

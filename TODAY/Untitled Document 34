@@ -1,0 +1,219 @@
+| column_name     | data_type                | is_nullable | column_default |
+| --------------- | ------------------------ | ----------- | -------------- |
+| id              | uuid                     | YES         | null           |
+| event_id        | uuid                     | YES         | null           |
+| sent_count      | integer                  | YES         | null           |
+| success_count   | integer                  | YES         | null           |
+| created_at      | timestamp with time zone | YES         | null           |
+| updated_at      | timestamp with time zone | YES         | null           |
+| reminder_time   | timestamp with time zone | YES         | null           |
+| reminder_type   | character varying        | YES         | null           |
+| target_audience | character varying        | YES         | null           |
+| message         | text                     | YES         | null           |
+| reminder_status | character varying        | YES         | null           |
+
+
+
+event_reminders
+event_reminders_consolidated
+event_reminders_unified
+event_reminders_view
+event_rsvp_reminders_consolidated
+event_rsvp_reminders
+event_rsvp_reminders_view
+
+create table public.event_rsvp_reminders (
+  id uuid not null default gen_random_uuid (),
+  event_id uuid null,
+  user_id uuid null,
+  reminder_type character varying(50) null default 'initial'::character varying,
+  reminder_sent boolean null default false,
+  reminder_time timestamp with time zone not null,
+  sent_time timestamp with time zone null,
+  response_received boolean null default false,
+  response_time timestamp with time zone null,
+  escalation_level integer null default 1,
+  template_used character varying(100) null,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  constraint event_rsvp_reminders_pkey primary key (id),
+  constraint event_rsvp_reminders_event_id_fkey foreign KEY (event_id) references events (id) on delete CASCADE,
+  constraint event_rsvp_reminders_user_id_fkey foreign KEY (user_id) references users (id) on delete CASCADE,
+  constraint event_rsvp_reminders_escalation_level_check check (
+    (
+      (escalation_level >= 1)
+      and (escalation_level <= 5)
+    )
+  ),
+  constraint event_rsvp_reminders_reminder_type_check check (
+    (
+      (reminder_type)::text = any (
+        (
+          array[
+            'initial'::character varying,
+            'follow_up'::character varying,
+            'final'::character varying,
+            'deadline'::character varying
+          ]
+        )::text[]
+      )
+    )
+  )
+) TABLESPACE pg_default;
+
+create index IF not exists idx_rsvp_reminders_event on public.event_rsvp_reminders using btree (event_id) TABLESPACE pg_default;
+
+create index IF not exists idx_rsvp_reminders_user on public.event_rsvp_reminders using btree (user_id) TABLESPACE pg_default;
+
+create index IF not exists idx_rsvp_reminders_time on public.event_rsvp_reminders using btree (reminder_time) TABLESPACE pg_default;
+
+create index IF not exists idx_rsvp_reminders_sent on public.event_rsvp_reminders using btree (reminder_sent) TABLESPACE pg_default;
+
+create trigger update_event_rsvp_reminders_updated_at BEFORE
+update on event_rsvp_reminders for EACH row
+execute FUNCTION update_updated_at ();
+
+| column_name       | data_type                | is_nullable | column_default |
+| ----------------- | ------------------------ | ----------- | -------------- |
+| updated_at        | timestamp with time zone | YES         | null           |
+| event_id          | uuid                     | YES         | null           |
+| user_id           | uuid                     | YES         | null           |
+| created_at        | timestamp with time zone | YES         | null           |
+| id                | uuid                     | YES         | null           |
+| reminder_sent     | boolean                  | YES         | null           |
+| reminder_time     | timestamp with time zone | YES         | null           |
+| sent_time         | timestamp with time zone | YES         | null           |
+| response_received | boolean                  | YES         | null           |
+| response_time     | timestamp with time zone | YES         | null           |
+| escalation_level  | integer                  | YES         | null           |
+| reminder_type     | text                     | YES         | null           |
+| template_used     | text                     | YES         | null           |
+
+
+| column_name       | data_type                | is_nullable | column_default               |
+| ----------------- | ------------------------ | ----------- | ---------------------------- |
+| updated_at        | timestamp with time zone | YES         | now()                        |
+| event_id          | uuid                     | YES         | null                         |
+| user_id           | uuid                     | YES         | null                         |
+| created_at        | timestamp with time zone | YES         | now()                        |
+| id                | uuid                     | NO          | gen_random_uuid()            |
+| reminder_sent     | boolean                  | YES         | false                        |
+| reminder_time     | timestamp with time zone | NO          | null                         |
+| sent_time         | timestamp with time zone | YES         | null                         |
+| response_received | boolean                  | YES         | false                        |
+| response_time     | timestamp with time zone | YES         | null                         |
+| escalation_level  | integer                  | YES         | 1                            |
+| reminder_type     | character varying        | YES         | 'initial'::character varying |
+| template_used     | character varying        | YES         | null                         |
+
+
+
+| column_name       | data_type                | is_nullable | column_default |
+| ----------------- | ------------------------ | ----------- | -------------- |
+| updated_at        | timestamp with time zone | YES         | null           |
+| event_id          | uuid                     | YES         | null           |
+| user_id           | uuid                     | YES         | null           |
+| escalation_level  | integer                  | YES         | null           |
+| created_at        | timestamp with time zone | YES         | null           |
+| id                | uuid                     | YES         | null           |
+| reminder_sent     | boolean                  | YES         | null           |
+| reminder_time     | timestamp with time zone | YES         | null           |
+| sent_time         | timestamp with time zone | YES         | null           |
+| response_received | boolean                  | YES         | null           |
+| reminder_type     | character varying        | YES         | null           |
+| response_time     | text                     | YES         | null           |
+| template_used     | character varying        | YES         | null           |
+
+| total_old_records | total_new_records | status               |
+
+| ----------------- | ----------------- | -------------------- |
+
+| 0                 | 0                 | ✅ Migration Complete || column_name     | data_type                | is_nullable | column_default |
+
+| --------------- | ------------------------ | ----------- | -------------- |
+
+| id              | uuid                     | YES         | null           |
+
+| event_id        | uuid                     | YES         | null           |
+
+| sent_count      | integer                  | YES         | null           |
+
+| success_count   | integer                  | YES         | null           |
+
+| created_at      | timestamp with time zone | YES         | null           |
+
+| updated_at      | timestamp with time zone | YES         | null           |
+
+| reminder_time   | timestamp with time zone | YES         | null           |
+
+| reminder_type   | text                     | YES         | null           |
+
+| target_audience | text                     | YES         | null           |
+
+| message         | text                     | YES         | null           |
+
+| reminder_status | text                     | YES         | null           || column_name             | data_type                | is_nullable | column_default |
+
+| ----------------------- | ------------------------ | ----------- | -------------- |
+
+| updated_at              | timestamp with time zone | YES         | null           |
+
+| event_id                | uuid                     | YES         | null           |
+
+| sent_at                 | timestamp with time zone | YES         | null           |
+
+| sent_count              | integer                  | YES         | null           |
+
+| delivered_count         | integer                  | YES         | null           |
+
+| opened_count            | integer                  | YES         | null           |
+
+| clicked_count           | integer                  | YES         | null           |
+
+| response_received_count | integer                  | YES         | null           |
+
+| escalation_level        | integer                  | YES         | null           |
+
+| created_by              | uuid                     | YES         | null           |
+
+| created_at              | timestamp with time zone | YES         | null           |
+
+| id                      | uuid                     | YES         | null           |
+
+| specific_recipient      | uuid                     | YES         | null           |
+
+| scheduled_for           | timestamp with time zone | YES         | null           |
+
+| event_name              | text                     | YES         | null           |
+
+| category                | text                     | YES         | null           |
+
+| channel                 | text                     | YES         | null           |
+
+| purpose                 | text                     | YES         | null           |
+
+| recipient_type          | text                     | YES         | null           |
+
+| created_by_name         | text                     | YES         | null           |
+
+| recipient_name          | text                     | YES         | null           |
+
+| subject                 | text                     | YES         | null           |
+
+| content                 | text                     | YES         | null           |
+
+| delivery_status         | text                     | YES         | null           | 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,139 @@
+
+
+# Production Supabase Configuration for fashionos
+NEXT_PUBLIC_SUPABASE_URL=https://wnjudgmhabzhcttgyxou.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduanVkZ21oYWJ6aGN0dGd5eG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTIzODIsImV4cCI6MjA2ODY2ODM4Mn0.0Qmbqqq2h4-WzoknUdcdL6WPyKaaAF6HSgxJkggRwGA
+SUPABASE_PROJECT_ID=wnjudgmhabzhcttgyxou
+
+# IMPORTANT: Service role key - keep secret!
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduanVkZ21oYWJ6aGN0dGd5eG91Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzA5MjM4MiwiZXhwIjoyMDY4NjY4MzgyfQ.QX2B9KAU2mXfia0G5mz5ZwbD5dE1QDpYnaA-EqxICLc
+
+# Database connection
+DATABASE_URL=postgresql://postgres:Toronto2025#@db.wnjudgmhabzhcttgyxou.supabase.co:5432/postgres
+
+# Supabase password
+SUPABASE_DB_PASSWORD=Toronto2025#
+
+# Production settings
+NEXTAUTH_SECRET=eventsOS-production-secret-2025
+NEXTAUTH_URL=http://localhost:3009
+
+# Enable real-time features
+NEXT_PUBLIC_ENABLE_REAL_TIME=true
+
+# Application settings
+NEXT_PUBLIC_APP_NAME=EventsOS
+NEXT_PUBLIC_APP_URL=http://localhost:3009
+
+# Email settings (to be configured)
+# RESEND_API_KEY=re_xxx
+
+# Stripe settings (to be configured)
+# STRIPE_SECRET_KEY=sk_live_xxx
+# NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_xxx
+
+# Redis cache (to be configured)
+# UPSTASH_REDIS_REST_URL=https://xxx.upstash.io
+# UPSTASH_REDIS_REST_TOKEN=xxx
+
+
+https://eventsos.app.n8n.cloud/
+N8N-api
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwNzgxZjJkNS1jM2Y4LTRmMDAtYjNmYS01ZGY3MGQ2NDk5ZTAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzUzMjM0MjEwfQ.NKoVYEICpo-pgMhAvEXxPMB-VuGGssD1KlAp-5Uuevc
+
+
+
+
+CLOUDINARY_URL=cloudinary://<your_api_key>:<your_api_secret>@dzqy2ixl0
+aoiYMvb6YMjgF4IfBvbt9yhauiY
+
+Cloud Name
+dz
+dzqy2ixl0
+
+ID 	
+d92be34bffdc794ce5357fd9024500
+
+Display Name
+dzqy2ixl0
+
+
+
+Official API: https://wa.aisensy.com/+15557828772
+
+API documentation: https://wiki.aisensy.com/en/
+
+Tutorials: https://aisensy.com/tutorials
+
+WhatsApp number: +15557828772
+
+App name: I Love MEDELLIN
+
+JWT Token:
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzMwNjBhMzlkYjc4MGMwNmJjYjRkMSIsIm5hbWUiOiJzb2NpYWxtZWRpYXZpbGxlIiwiYXBwTmFtZSI6IkFpU2Vuc3kiLCJjbGllbnRJZCI6IjY4MzMwNjBhMzlkYjc4MGMwNmJjYjRjYyIsImFjdGl2ZVBsYW4iOiJGUkVFX0ZPUkVWRVIiLCJpYXQiOjE3NDgxNzQzNDZ9.wBApCuT39R6aQUjIbtXkLZ44eGkmygXu2XhsTyPkU-k 
+
+
+
+
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmNDgyNTZkZS04ZTNkLTRlNWQtYmE1Ni02NzY1YmJmY2IwNWYiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiZjQ4MjU2ZGUtOGUzZC00ZTVkLWJhNTYtNjc2NWJiZmNiMDVmIiwiaWF0IjoxNzUzMjM0ODY4LCJleHAiOjQ5MDY4MzQ4NjcsImp0aSI6IjljMmJhYjNhLTJjYzItNDljNS05ZDViLWIzMzZjZTkwMzY0YSJ9.2u_9Wh_YHrUsSgpACgo_LY-KWvEHFeMSjpDpNjtRp2c
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Name of your workspace
+fashionOS
+Name of your API key
+eventos
+API Key
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmNDgyNTZkZS04ZTNkLTRlNWQtYmE1Ni02NzY1YmJmY2IwNWYiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiZjQ4MjU2ZGUtOGUzZC00ZTVkLWJhNTYtNjc2NWJiZmNiMDVmIiwiaWF0IjoxNzUzMjM0ODY4LCJleHAiOjQ5MDY4MzQ4NjcsImp0aSI6IjljMmJhYjNhLTJjYzItNDljNS05ZDViLWIzMzZjZTkwMzY0YSJ9.2u_9Wh_YHrUsSgpACgo_LY-KWvEHFeMSjpDpNjtRp2c
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
