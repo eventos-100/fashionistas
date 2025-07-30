@@ -1,0 +1,7 @@
+{
+  "root": "apps/website/nextapp",
+  "buildCommand": "pnpm install && pnpm run build",
+  "outputDirectory": ".next",
+  "installCommand": "pnpm install",
+  "framework": "nextjs"
+}

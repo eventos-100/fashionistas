@@ -1,0 +1,18 @@
+{
+  "name": "fashionone",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FashionOne Event Management Platform",
+  "scripts": {
+    "dev": "npm run dev --workspace=@fashionone/web",
+    "build": "npm run build --workspace=@fashionone/web",
+    "start": "npm run start --workspace=@fashionone/web",
+    "lint": "npm run lint --workspace=@fashionone/web"
+  },
+  "workspaces": [
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
