@@ -1,5 +1,5 @@
 import { MainLayout } from '../layouts/main';
-import { TravelLandingView } from '../sections/_travel/view/travel-landing-view';
+import { FashionLandingView } from '../sections/_fashion/view/fashion-landing-view';
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ export default function HomePage() {
         },
       }}
     >
-      <TravelLandingView />
+      <FashionLandingView />
     </MainLayout>
   );
 }

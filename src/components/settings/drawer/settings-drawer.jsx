@@ -43,7 +43,7 @@ export function SettingsDrawer({ sx, defaultSettings }) {
   };
 
   useEffect(() => {
-    if (mode !== undefined && mode !== settings.state.mode) {
+    if (mode !== undefined && settings?.state?.mode !== undefined && mode !== settings.state.mode) {
       settings.setState({ mode });
     }
   }, [mode, settings]);
@@ -88,7 +88,7 @@ export function SettingsDrawer({ sx, defaultSettings }) {
   const renderMode = () => (
     <BaseOption
       label="Mode"
-      selected={settings.state.mode === 'dark'}
+      selected={settings?.state?.mode === 'dark'}
       icon={<SvgIcon>{settingIcons.moon}</SvgIcon>}
       action={
         mode === 'system' ? (

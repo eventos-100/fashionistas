@@ -1,10 +1,14 @@
 import { addCollection } from '@iconify/react';
 
 import allIcons from './icon-sets';
+import { additionalIcons } from './icon-sets-additions';
 
 // ----------------------------------------------------------------------
 
-export const iconSets = Object.entries(allIcons).reduce((acc, [key, value]) => {
+// Merge all icons with additional icons
+const mergedIcons = { ...allIcons, ...additionalIcons };
+
+export const iconSets = Object.entries(mergedIcons).reduce((acc, [key, value]) => {
   const [prefix, iconName] = key.split(':');
   const existingPrefix = acc.find((item) => item.prefix === prefix);
 
@@ -22,7 +26,7 @@ export const iconSets = Object.entries(allIcons).reduce((acc, [key, value]) => {
   return acc;
 }, []);
 
-export const allIconNames = Object.keys(allIcons);
+export const allIconNames = Object.keys(mergedIcons);
 
 // ----------------------------------------------------------------------
 

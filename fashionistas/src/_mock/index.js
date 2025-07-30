@@ -8,6 +8,8 @@ export * from './assets';
 
 export * from './_tours';
 
+export * from './_fashionEvents';
+
 export * from './_designers';
 
 export * from './_others';
