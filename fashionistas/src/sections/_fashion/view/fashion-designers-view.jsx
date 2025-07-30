@@ -2,7 +2,7 @@
 
 import Container from '@mui/material/Container';
 
-import { TravelNewsletter } from 'src/sections/_travel/travel-newsletter';
+import { FashionNewsletter } from '../fashion-newsletter';
 import { FashionDesignerHero } from '../fashion-designer-hero';
 import { FashionDesignerSpotlight } from '../fashion-designer-spotlight';
 import { FashionDesignerFilters } from '../filters/fashion-designer-filters';
@@ -17,17 +17,25 @@ export function FashionDesignersView({ designers }) {
     <>
       <FashionDesignerHero />
       
+      <Container sx={{ mt: -8, position: 'relative', zIndex: 9 }}>
+        <FashionDesignerSpotlight />
+      </Container>
+      
       <Container>
         <FashionDesignerFilters
           sx={{
-            mt: { xs: -3, md: -5 },
+            mt: { xs: 3, md: 5 },
             mb: { xs: 3, md: 5 },
           }}
         />
         <FashionDesignerList designers={designers || []} />
       </Container>
 
-      <TravelNewsletter />
+      <FashionCitiesGrid />
+      
+      <FashionDesignerServices />
+
+      <FashionNewsletter />
     </>
   );
 }

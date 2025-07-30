@@ -4,8 +4,6 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 
-import { bgGradient } from 'src/theme/styles';
-
 import { Image } from 'src/components/image';
 
 // ----------------------------------------------------------------------
@@ -26,14 +24,15 @@ export function FashionDesignerSpotlight({ designer, sx, ...other }) {
       {...other}
     >
       <Box
-        sx={{
-          ...bgGradient({
-            color: (theme) =>
-              `to right, ${theme.vars.palette.grey[900]} 25%, ${theme.vars.palette.common.black}`,
+        sx={(theme) => ({
+          ...theme.mixins.bgGradient({
+            images: [
+              `linear-gradient(to right, ${theme.vars.palette.grey[900]} 25%, ${theme.vars.palette.common.black})`,
+            ],
           }),
           height: { xs: 400, md: 500 },
           position: 'relative',
-        }}
+        })}
       >
         <Image
           alt="Designer spotlight"
